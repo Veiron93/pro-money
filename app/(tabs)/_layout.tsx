@@ -1,45 +1,73 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Coins, Heart, Home, Percent, Settings } from 'lucide-react-native';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+    const COLORS = {
+        active: '#14532d',
+        background: '#171717',
+        white: '#ffffff',
+    } as const;
 
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+    const tabsOptions = {
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+        tabBarActiveTintColor: COLORS.active,
+        headerTintColor: COLORS.white,
+        tabBarStyle: {
+            backgroundColor: COLORS.background,
+            borderTopWidth: 0,
+        },
+        headerStyle: {
+            backgroundColor: COLORS.background,
+            borderBottomWidth: 0,
+        },
+        sceneStyle: {
+            backgroundColor: COLORS.background,
+            padding: 15,
+            paddingTop: 0,
+        },
+    };
+
+    return (
+        <Tabs initialRouteName="index" screenOptions={tabsOptions}>
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Главная',
+                    tabBarIcon: ({ color }) => <Home color={color} size={22} />,
+                }}
+            />
+
+            <Tabs.Screen
+                name="cashback"
+                options={{
+                    title: 'Кешбек',
+                    tabBarIcon: ({ color }) => <Percent color={color} size={22} />,
+                }}
+            />
+
+            <Tabs.Screen
+                name="debts"
+                options={{
+                    title: 'Долги',
+                    tabBarIcon: ({ color }) => <Coins color={color} size={22} />,
+                }}
+            />
+
+            <Tabs.Screen
+                name="help"
+                options={{
+                    title: 'Поддержать',
+                    tabBarIcon: ({ color }) => <Heart color={color} size={22} />,
+                }}
+            />
+
+            <Tabs.Screen
+                name="settings"
+                options={{
+                    title: 'Настройки',
+                    tabBarIcon: ({ color }) => <Settings color={color} size={22} />,
+                }}
+            />
+        </Tabs>
+    );
 }

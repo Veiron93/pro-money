@@ -1,39 +1,48 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import '@/global.css';
+import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { AppState, AppStateStatus } from 'react-native';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const queryClient = new QueryClient();
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+function onAppStateChange(status: AppStateStatus) {
+    if (Platform.OS !== 'web') {
+        focusManager.setFocused(status === 'active');
+    }
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', onAppStateChange);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+        if (Platform.OS === 'web') {
+            // Для веб-платформы используем события окна
+            window.addEventListener('focus', () => focusManager.setFocused(true));
+            window.addEventListener('blur', () => focusManager.setFocused(false));
+        }
 
-  if (!loaded) {
-    return null;
-  }
+        return () => {
+            subscription.remove();
+            if (Platform.OS === 'web') {
+                window.removeEventListener('focus', () => focusManager.setFocused(true));
+                window.removeEventListener('blur', () => focusManager.setFocused(false));
+            }
+        };
+    }, []);
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    return (
+        <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar style="auto" />
+            <GluestackUIProvider mode="dark">
+                <QueryClientProvider client={queryClient}>
+                    <Stack screenOptions={{ headerShown: false }} />
+                </QueryClientProvider>
+            </GluestackUIProvider>
+        </SafeAreaView>
+    );
 }

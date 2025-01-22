@@ -1,0 +1,1 @@
+export { FormBankCard } from './FormBankCard';
