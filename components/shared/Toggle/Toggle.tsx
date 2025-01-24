@@ -10,7 +10,7 @@ interface ToggleProps {
 }
 
 export function Toggle({ active, items, style, setActive }: ToggleProps) {
-    const toggleStyle = `max-h-[58px] h-[58px] flex-none bg-neutral-800 p-[5px] rounded-2xl ${style}`;
+    const toggleStyle = `h-[58px] p-[4px] bg-neutral-800 rounded-2xl flex-none ${style}`;
 
     return (
         <HStack className={toggleStyle} space="sm">

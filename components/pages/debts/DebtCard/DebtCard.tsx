@@ -2,34 +2,28 @@ import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { Debt } from '@/types/debts';
-import { LinearGradient } from 'expo-linear-gradient';
+import { GradientContainer } from '@components/shared/GradientContainer';
 import { ClockIcon } from 'lucide-react-native';
-import { FC } from 'react';
 
-const amountStyle = 'text-green-600';
-
-export const DebtCard: FC<{ data: Debt }> = ({ data }) => {
+export const DebtCard = ({ data }: { data: Debt }) => {
     const { debtorName, amount, date, description, type, currency } = data;
 
+    const AmountText = ({ text }: { text: string }) => {
+        return (
+            <Text className="text-green-600" size="2xl">
+                {text}
+            </Text>
+        );
+    };
+
     return (
-        <LinearGradient
-            className="overflow-hidden rounded-3xl p-4"
-            colors={['#262626', '#404040']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-        >
+        <GradientContainer>
             <VStack space="sm">
                 <HStack space="md" className="items-center justify-between">
                     <Text size="2xl">{debtorName}</Text>
-                    <HStack space="xs">
-                        <Text className={amountStyle} size="2xl">
-                            {amount}
-                        </Text>
-                        {type === 'money' && (
-                            <Text className={amountStyle} size="2xl">
-                                {currency}
-                            </Text>
-                        )}
+                    <HStack className="flex-none" space="xs">
+                        <AmountText text={amount} />
+                        {type === 'money' && <AmountText text={currency} />}
                     </HStack>
                 </HStack>
 
@@ -41,11 +35,11 @@ export const DebtCard: FC<{ data: Debt }> = ({ data }) => {
                 )}
 
                 {description && (
-                    <Text size="md" className="text-neutral-400">
+                    <Text className="text-neutral-400" size="md">
                         {description}
                     </Text>
                 )}
             </VStack>
-        </LinearGradient>
+        </GradientContainer>
     );
 };

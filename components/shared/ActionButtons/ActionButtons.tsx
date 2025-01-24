@@ -4,7 +4,7 @@ import { HStack } from '@/components/ui/hstack';
 interface ActionButtonsProps {
     confirm: () => void;
     cancel: () => void;
-    isPending: boolean;
+    isPending?: boolean;
     confirmText: string;
 }
 

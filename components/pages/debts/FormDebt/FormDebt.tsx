@@ -1,10 +1,10 @@
-import { Toggle } from '@/components/shared/Toggle';
-import { Button, ButtonText } from '@/components/ui/button';
-import { HStack } from '@/components/ui/hstack';
-import { Input, InputField } from '@/components/ui/input';
-import { Text } from '@/components/ui/text';
-import { VStack } from '@/components/ui/vstack';
-import { DebtFormData, DebtType, DebtorType } from '@/types/debts';
+import { ActionButtons } from '@components/shared/ActionButtons';
+import { Input } from '@components/shared/Input';
+import { Toggle } from '@components/shared/Toggle';
+import { HStack } from '@components/ui/hstack';
+import { Text } from '@components/ui/text';
+import { VStack } from '@components/ui/vstack';
+import { DebtFormData, DebtType, DebtorType } from '@customTypes/debts';
 import { CURRENCY } from '@keys/currency';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -115,14 +115,12 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
                         <Text size="xl">
                             {formData.debtorType === DEBTOR_TYPE.I ? 'Кому / Куда должен' : 'Кто должен'}
                         </Text>
-                        <Input isInvalid={invalidDebtorName} className="h-[56px] rounded-2xl">
-                            <InputField
-                                onChangeText={(value) => setFormData({ ...formData, debtorName: value })}
-                                value={formData.debtorName}
-                                className="text-xl"
-                                placeholder={formData.debtorType === DEBTOR_TYPE.ME ? 'Иван' : 'Петру'}
-                            />
-                        </Input>
+
+                        <Input
+                            isInvalid={invalidDebtorName}
+                            value={formData.debtorName}
+                            onChange={(value) => setFormData({ ...formData, debtorName: value })}
+                        />
                     </VStack>
 
                     <VStack space="md">
@@ -137,22 +135,16 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
                         <HStack space="md" className="items-center">
                             <Input
                                 isInvalid={invalidAmount}
-                                className={`flex-0 h-[56px] rounded-2xl ${formData.type === DEBT_TYPE.MONEY ? 'w-[150px]' : 'w-full'}`}
-                            >
-                                <InputField
-                                    onChangeText={(value) => setFormData({ ...formData, amount: value })}
-                                    value={formData.amount}
-                                    keyboardType={formData.type === DEBT_TYPE.MONEY ? 'numeric' : 'default'}
-                                    className="text-xl"
-                                    placeholder={formData.type === DEBT_TYPE.MONEY ? '1000' : 'Книгу'}
-                                />
-                            </Input>
+                                onChange={(value) => setFormData({ ...formData, amount: value })}
+                                className={`${formData.type === DEBT_TYPE.MONEY ? 'flex-1' : 'w-full'}`}
+                                value={formData.amount}
+                                placeholder={formData.type === DEBT_TYPE.MONEY ? '1000' : 'Книгу'}
+                                keyboardType={formData.type === DEBT_TYPE.MONEY ? 'numeric' : 'default'}
+                            />
 
-                            {/* 
-                            FIXME: починить в приложении 
-                            */}
                             {formData.type === DEBT_TYPE.MONEY && (
                                 <Toggle
+                                    style="flex-1"
                                     active={formData.currency}
                                     setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
                                     items={[
@@ -167,40 +159,30 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
 
                     <VStack space="md">
                         <Text size="xl">До какого времени</Text>
-                        <Input className="h-[56px] rounded-2xl">
-                            <InputField
-                                onChangeText={(value) => setFormData({ ...formData, date: value })}
-                                value={formData.date}
-                                className="text-xl"
-                                placeholder="01.01.2024"
-                                keyboardType="numeric"
-                            />
-                        </Input>
+                        <Input
+                            value={formData.date}
+                            placeholder="01.01.2024"
+                            onChange={(value) => setFormData({ ...formData, date: value })}
+                        />
                     </VStack>
 
                     <VStack space="md">
                         <Text size="xl">Примечание</Text>
-                        <Input className="h-[56px] rounded-2xl">
-                            <InputField
-                                onChangeText={(value) => setFormData({ ...formData, description: value })}
-                                value={formData.description}
-                                className="text-xl"
-                                placeholder={formData.type === DEBT_TYPE.MONEY ? 'За обед в столовой' : 'Война и мир'}
-                            />
-                        </Input>
+                        <Input
+                            onChange={(value) => setFormData({ ...formData, description: value })}
+                            value={formData.description}
+                            placeholder={formData.type === DEBT_TYPE.MONEY ? 'За обед в столовой' : 'Гуси лебеди'}
+                        />
                     </VStack>
                 </VStack>
             </ScrollView>
 
-            <HStack className="mt-auto w-full justify-between">
-                <Button onPress={handleSubmit} className="w-[48%] rounded-2xl" size="xl">
-                    <ButtonText>{btnSubmit.title}</ButtonText>
-                </Button>
-
-                <Button onPress={handleCancel} className="w-[48%] rounded-2xl" size="xl" variant="outline">
-                    <ButtonText>Отмена</ButtonText>
-                </Button>
-            </HStack>
+            <ActionButtons
+                confirm={handleSubmit}
+                cancel={handleCancel}
+                //isPending={isPendingAdd}
+                confirmText={btnSubmit.title}
+            />
         </VStack>
     );
 };
