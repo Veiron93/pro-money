@@ -37,4 +37,29 @@ export const debtManager = {
         const updatedDebts = debts.map((debt) => (debt.id === data.id ? data : debt));
         await debtRepository.save(updatedDebts);
     },
+
+    async getDebtById(id: string): Promise<Debt | undefined> {
+        const debts = await debtRepository.getAll();
+
+        if (!debts) {
+            return;
+        }
+
+        return debts.find((debt) => debt.id === id);
+    },
+
+    async enrichDebtWithUpdates(debtId: string, formData: DebtFormData): Promise<Debt | undefined> {
+        const debts = await debtRepository.getAll();
+        const debt = debts.find((debt) => debt.id === debtId);
+
+        if (!debt) {
+            console.log('Долг не найден');
+            return;
+        }
+
+        return {
+            ...debt,
+            ...formData,
+        };
+    },
 };

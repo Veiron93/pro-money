@@ -1,6 +1,6 @@
-import { Box } from '@/components/ui/box';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
+import { Box } from '@components/ui/box';
+import { Heading } from '@components/ui/heading';
+import { Text } from '@components/ui/text';
 import * as Clipboard from 'expo-clipboard';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
@@ -42,7 +42,7 @@ export default function Help() {
             </Box>
 
             <Box className="mt-12 items-center">
-                <Heading className="text-white  mb-3" size="xl">
+                <Heading className="text-white mb-3" size="xl">
                     Связь с разработчиком!
                 </Heading>
 

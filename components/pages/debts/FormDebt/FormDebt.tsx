@@ -4,10 +4,10 @@ import { HStack } from '@/components/ui/hstack';
 import { Input, InputField } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { Currency, DebtFormData, DebtType, DebtorType } from '@/types/debts';
+import { DebtFormData, DebtType, DebtorType } from '@/types/debts';
+import { CURRENCY } from '@keys/currency';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { FC } from 'react';
 import { ScrollView } from 'react-native';
 
 const DEBTOR_TYPE = {
@@ -20,18 +20,12 @@ const DEBT_TYPE = {
     OTHER: 'other' as DebtType,
 } as const;
 
-const CURRENCY = {
-    RUB: '₽' as Currency,
-    EUR: '€' as Currency,
-    USD: '$' as Currency,
-} as const;
-
 interface FormDebtProps {
     initialData?: Partial<DebtFormData>;
     btnSubmit: { title: string; onPress: (formData: DebtFormData) => Promise<void> };
 }
 
-export const FormDebt: FC<FormDebtProps> = ({ initialData, btnSubmit }: FormDebtProps) => {
+export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
     const [invalidDebtorName, setInvalidDebtorName] = useState(false);
     const [invalidAmount, setInvalidAmount] = useState(false);
 
@@ -143,7 +137,7 @@ export const FormDebt: FC<FormDebtProps> = ({ initialData, btnSubmit }: FormDebt
                         <HStack space="md" className="items-center">
                             <Input
                                 isInvalid={invalidAmount}
-                                className={`flex-0 h-[56px] rounded-2xl ${formData.type === DEBT_TYPE.MONEY ? 'w-[200px]' : 'w-full'}`}
+                                className={`flex-0 h-[56px] rounded-2xl ${formData.type === DEBT_TYPE.MONEY ? 'w-[150px]' : 'w-full'}`}
                             >
                                 <InputField
                                     onChangeText={(value) => setFormData({ ...formData, amount: value })}
@@ -154,10 +148,13 @@ export const FormDebt: FC<FormDebtProps> = ({ initialData, btnSubmit }: FormDebt
                                 />
                             </Input>
 
+                            {/* 
+                            FIXME: починить в приложении 
+                            */}
                             {formData.type === DEBT_TYPE.MONEY && (
                                 <Toggle
                                     active={formData.currency}
-                                    setActive={(value) => setFormData({ ...formData, currency: value as Currency })}
+                                    setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
                                     items={[
                                         { title: CURRENCY.RUB, value: CURRENCY.RUB },
                                         { title: CURRENCY.EUR, value: CURRENCY.EUR },

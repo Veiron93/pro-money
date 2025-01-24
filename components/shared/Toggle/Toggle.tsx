@@ -1,16 +1,16 @@
-import { HStack } from '@/components/ui/hstack';
+import { HStack } from '@components/ui/hstack';
 
 import { ToggleButton } from './ToggleButton';
 
 interface ToggleProps {
     active: string;
-    setActive: (active: string) => void;
     items: { title: string; value: string }[];
     style?: string;
+    setActive: (active: string) => void;
 }
 
-export function Toggle({ active, setActive, items, style }: ToggleProps) {
-    const toggleStyle = 'max-h-[58px] bg-neutral-800 p-[5px] rounded-2xl flex-1' + ' ' + style;
+export function Toggle({ active, items, style, setActive }: ToggleProps) {
+    const toggleStyle = `max-h-[58px] h-[58px] flex-none bg-neutral-800 p-[5px] rounded-2xl ${style}`;
 
     return (
         <HStack className={toggleStyle} space="sm">

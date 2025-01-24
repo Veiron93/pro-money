@@ -7,7 +7,7 @@ export function ToggleButton({ title, active, onPress }: { title: string; active
             className={`h-[48px] flex-1 rounded-xl ${active ? 'bg-neutral-700' : 'bg-transparent'}`}
             onPress={onPress}
         >
-            <ButtonText className="text-white" size="lg">
+            <ButtonText className="text-white" size="md">
                 {title}
             </ButtonText>
         </Button>

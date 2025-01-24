@@ -64,7 +64,7 @@ export const TotalDebt: FC<DebtListProps> = ({ debts, debtsTypeActive }) => {
     if (!isTotalDebtI && !isTotalDebtMe) return null;
 
     return (
-        <HStack className="w-full" space="md">
+        <HStack className="w-full h-[32px]" space="md">
             {debtsTypeActive === 'i' && isTotalDebtI && renderTotalDebt(totalDebtI)}
             {debtsTypeActive === 'me' && isTotalDebtMe && renderTotalDebt(totalDebtMe)}
         </HStack>

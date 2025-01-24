@@ -2,7 +2,7 @@ import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
 import { Debt } from '@/types/debts';
 import { router } from 'expo-router';
-import { FC, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Pressable } from 'react-native';
 
 import { DebtCard } from '../DebtCard';
@@ -12,7 +12,7 @@ interface DebtListItemProps {
     data: Debt;
 }
 
-export const DebtListItem: FC<DebtListItemProps> = ({ children, data }) => {
+export const DebtListItem = ({ children, data }: DebtListItemProps) => {
     const handleSelectDebt = (id: string) => {
         router.push(`/debts/${id}`);
     };

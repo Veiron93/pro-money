@@ -1,5 +1,5 @@
 import { Button } from '@components/ui/button';
-import { Check, Trash } from 'lucide-react-native';
+import { Trash, Undo2 } from 'lucide-react-native';
 
 const DEBT_ACTION_BUTTON_STYLES = {
     base: 'p-1 w-[40px] h-[40px] bg-neutral-900 rounded-full',
@@ -8,18 +8,15 @@ const DEBT_ACTION_BUTTON_STYLES = {
 
 interface DebtItemActionsProps {
     id: string;
-    onCompleteDebt: (id: string) => void;
+    onRestoreDebt: (id: string) => void;
     onDeleteDebt: (id: string) => void;
 }
 
-export const ActionsButtons = ({ id, onCompleteDebt, onDeleteDebt }: DebtItemActionsProps) => {
+export const ActionsButtons = ({ id, onRestoreDebt, onDeleteDebt }: DebtItemActionsProps) => {
     return (
         <>
-            <Button
-                className={`${DEBT_ACTION_BUTTON_STYLES.base} ${DEBT_ACTION_BUTTON_STYLES.completed}`}
-                onPress={() => onCompleteDebt(id)}
-            >
-                <Check size={28} color="#fff" />
+            <Button className={DEBT_ACTION_BUTTON_STYLES.base} onPress={() => onRestoreDebt(id)}>
+                <Undo2 size={20} color="white" />
             </Button>
 
             <Button className={DEBT_ACTION_BUTTON_STYLES.base} onPress={() => onDeleteDebt(id)}>
