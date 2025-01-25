@@ -1,12 +1,11 @@
-import { CashbackCategoryItem } from '@/components/pages/cashback/CashbackCategoryItem';
-import { GradientContainer } from '@/components/shared/GradientContainer';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
-import { VStack } from '@/components/ui/vstack';
-import type { CashbackItem } from '@/types/cashback';
-import { FC } from 'react';
+import { CashbackCategoryItem } from '@components/pages/cashback/CashbackCategoryItem';
+import { GradientContainer } from '@components/shared/GradientContainer';
+import { Heading } from '@components/ui/heading';
+import { Text } from '@components/ui/text';
+import { VStack } from '@components/ui/vstack';
+import type { CashbackItem } from '@customTypes/cashback';
 
-export const CashbackCard: FC<CashbackItem> = ({ card, cashbackCategories }) => {
+export const CashbackCard = ({ card, cashbackCategories }: CashbackItem) => {
     return (
         <GradientContainer>
             <Heading className="text-white font-bold" size="3xl">

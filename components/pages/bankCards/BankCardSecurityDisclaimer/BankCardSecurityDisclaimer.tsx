@@ -1,6 +1,6 @@
-import { GradientContainer } from '@/components/shared/GradientContainer';
-import { HStack } from '@/components/ui/hstack';
-import { Text } from '@/components/ui/text';
+import { GradientContainer } from '@components/shared/GradientContainer';
+import { HStack } from '@components/ui/hstack';
+import { Text } from '@components/ui/text';
 import { ShieldAlert } from 'lucide-react-native';
 
 export const BankCardSecurityDisclaimer = () => (

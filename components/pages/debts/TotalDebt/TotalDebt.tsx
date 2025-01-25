@@ -1,7 +1,7 @@
-import { HStack } from '@/components/ui/hstack';
-import { Text } from '@/components/ui/text';
-import { Debt, DebtorType, DebtsGrouped } from '@/types/debts';
-import { FC, useMemo } from 'react';
+import { HStack } from '@components/ui/hstack';
+import { Text } from '@components/ui/text';
+import { Debt, DebtorType, DebtsGrouped } from '@customTypes/debts';
+import { useMemo } from 'react';
 
 interface TotalDebt {
     rub: number;
@@ -22,7 +22,7 @@ const CURRENCIES = {
     $: 'usd',
 } as const;
 
-export const TotalDebt: FC<DebtListProps> = ({ debts, debtsTypeActive }) => {
+export const TotalDebt = ({ debts, debtsTypeActive }: DebtListProps) => {
     const { totalDebtI, totalDebtMe, isTotalDebtI, isTotalDebtMe } = useMemo(() => {
         const calculateTotal = (debtsList: Debt[]) => {
             const total = {

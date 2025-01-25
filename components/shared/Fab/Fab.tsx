@@ -1,4 +1,4 @@
-import { Fab as FabGluestack, FabIcon, FabLabel } from '@/components/ui/fab';
+import { Fab as FabGluestack, FabIcon, FabLabel } from '@components/ui/fab';
 import { SvgProps } from 'react-native-svg';
 
 interface FabProps {

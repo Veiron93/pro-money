@@ -1,5 +1,5 @@
-import { ButtonText } from '@/components/ui/button';
-import { Button } from '@/components/ui/button';
+import { ButtonText } from '@components/ui/button';
+import { Button } from '@components/ui/button';
 
 export function ToggleButton({ title, active, onPress }: { title: string; active: boolean; onPress: () => void }) {
     return (

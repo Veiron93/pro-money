@@ -1,6 +1,6 @@
-import { ToastDescription, ToastTitle, Toast as ToastUI, useToast } from '@/components/ui/toast';
+import { ToastDescription, ToastTitle, Toast as ToastUI, useToast } from '@components/ui/toast';
 import { InterfaceToastProps } from '@gluestack-ui/toast/lib/types';
-import { FC, ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 
 interface ToastProps {
     title: string;
@@ -10,7 +10,7 @@ interface ToastProps {
     state: boolean;
 }
 
-export const Toast: FC<ToastProps> = ({ title, description, duration, placement, state }: ToastProps): ReactNode => {
+export const Toast = ({ title, description, duration, placement, state }: ToastProps) => {
     const toast = useToast();
 
     const params: InterfaceToastProps = {

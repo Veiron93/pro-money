@@ -1,5 +1,5 @@
-import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
-import { HStack } from '@/components/ui/hstack';
+import { Button, ButtonSpinner, ButtonText } from '@components/ui/button';
+import { HStack } from '@components/ui/hstack';
 
 interface ActionButtonsProps {
     confirm: () => void;

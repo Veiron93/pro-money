@@ -1,8 +1,8 @@
-import { HStack } from '@/components/ui/hstack';
-import { Text } from '@/components/ui/text';
-import { VStack } from '@/components/ui/vstack';
-import { Debt } from '@/types/debts';
 import { GradientContainer } from '@components/shared/GradientContainer';
+import { HStack } from '@components/ui/hstack';
+import { Text } from '@components/ui/text';
+import { VStack } from '@components/ui/vstack';
+import { Debt } from '@customTypes/debts';
 import { ClockIcon } from 'lucide-react-native';
 
 export const DebtCard = ({ data }: { data: Debt }) => {

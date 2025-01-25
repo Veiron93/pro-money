@@ -1,6 +1,6 @@
-import { HStack } from '@/components/ui/hstack';
-import { VStack } from '@/components/ui/vstack';
-import { Debt } from '@/types/debts';
+import { HStack } from '@components/ui/hstack';
+import { VStack } from '@components/ui/vstack';
+import { Debt } from '@customTypes/debts';
 import { router } from 'expo-router';
 import { ReactNode } from 'react';
 import { Pressable } from 'react-native';

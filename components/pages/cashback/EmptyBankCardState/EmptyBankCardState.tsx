@@ -1,4 +1,4 @@
-import { Text } from '@/components/ui/text';
+import { Text } from '@components/ui/text';
 import { router } from 'expo-router';
 import { CreditCard } from 'lucide-react-native';
 import { Pressable } from 'react-native';

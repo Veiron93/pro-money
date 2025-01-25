@@ -1,3 +1,4 @@
+import { COLORS } from '@configs/theme';
 import { Stack } from 'expo-router';
 
 export const Layout = () => {
@@ -5,11 +6,11 @@ export const Layout = () => {
         <Stack
             screenOptions={{
                 headerStyle: {
-                    backgroundColor: '#171717',
+                    backgroundColor: COLORS.background,
                 },
-                headerTintColor: '#fff',
+                headerTintColor: COLORS.white,
                 contentStyle: {
-                    backgroundColor: '#171717',
+                    backgroundColor: COLORS.background,
                 },
                 headerShadowVisible: false,
             }}

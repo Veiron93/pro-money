@@ -1,8 +1,8 @@
-import { useDebts } from '@/hooks/useDebts';
 import { ActionsButtons } from '@components/pages/debts/ArchiveDebtsList/ActionsButtons';
 import { DebtListItem } from '@components/pages/debts/DebtListItem';
 import { Box } from '@components/ui/box';
 import type { Debt } from '@customTypes/debts';
+import { useDebts } from '@hooks/useDebts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { FC } from 'react';

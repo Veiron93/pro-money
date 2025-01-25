@@ -1,8 +1,8 @@
-import { Box } from '@/components/ui/box';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
-import { BankCard } from '@/types/bankCard';
 import { GradientContainer } from '@components/shared/GradientContainer';
+import { Box } from '@components/ui/box';
+import { Heading } from '@components/ui/heading';
+import { Text } from '@components/ui/text';
+import { BankCard } from '@customTypes/bankCard';
 import { CreditCard } from 'lucide-react-native';
 
 export const BankCardItem = ({ data }: { data: BankCard }) => {
