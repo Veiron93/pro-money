@@ -1,117 +1,54 @@
-import { FormBankCard } from '@/components/pages/bankCards/FormBankCard/FormBankCard';
-import { ActionButtons } from '@/components/shared/ActionButtons';
-import { Spinner } from '@/components/shared/Spinner';
-import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { VStack } from '@/components/ui/vstack';
-import { getBankCardById } from '@/services/bankCardService';
-import { updateBankCard } from '@/services/bankCardService';
-import type { BankCardFormData } from '@/types/bankCard';
-import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { FormBankCard } from '@components/pages/bankCards/FormBankCard';
+import { VStack } from '@components/ui/vstack';
+import { BANK_CARDS_QUERY_KEYS } from '@constants/queryKeys';
+import { BankCardFormData } from '@customTypes/bankCard';
+import { useBankCards } from '@hooks/useBankCards';
+import { paramsToastMessageProps, useToastMessage } from '@hooks/useToastMessage';
+import { bankCardManager } from '@managers/bankCardManager';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function EditCardScreen() {
-    const toast = useToast();
-    const router = useRouter();
+    const queryClient = useQueryClient();
+    const { editCard: cardId } = useLocalSearchParams();
 
-    const { editCard } = useLocalSearchParams();
+    const showToast = useToastMessage();
 
-    const [isCardLoading, setIsCardLoading] = useState(true);
-    const [isPendingUpdate, setIsPendingUpdate] = useState(false);
+    const { editBankCard, isPending } = useBankCards();
 
-    const [invalidName, setInvalidName] = useState(false);
-
-    const [formData, setFormData] = useState<BankCardFormData>({
-        name: '',
-        description: '',
+    const { data } = useQuery({
+        queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD, cardId],
+        queryFn: async () => {
+            return bankCardManager.getBankCardById(cardId.toString());
+        },
+        enabled: !!cardId,
     });
 
-    const handleUpdate = async () => {
-        if (formData.name.length === 0) {
-            setInvalidName(true);
-            return false;
-        }
+    const handleEditBankCard = async (formData: BankCardFormData) => {
+        const errorMessageParams: paramsToastMessageProps = {
+            title: 'Ошибка!',
+            description: 'Ошибка при обновлении карты',
+            action: 'error',
+        };
 
-        setInvalidName(false);
-        setIsPendingUpdate(true);
-
-        await updateBankCard(String(editCard), formData)
+        return await editBankCard(cardId.toString(), formData)
             .then(() => {
-                router.back();
+                queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD, cardId] });
             })
-            .catch((e) => {
-                showError('Ошибка при обновлении карты');
-            })
-            .finally(() => {
-                setIsPendingUpdate(false);
+            .catch(() => {
+                showToast(errorMessageParams);
             });
     };
-
-    const showError = (errorText: string) => {
-        toast.show({
-            placement: 'top',
-            duration: 4000,
-            render: () => {
-                return (
-                    <Toast action="error" variant="solid">
-                        <ToastTitle>Ошибка!</ToastTitle>
-                        <ToastDescription>{errorText}</ToastDescription>
-                    </Toast>
-                );
-            },
-        });
-    };
-
-    const handleCancel = () => {
-        setInvalidName(false);
-        router.back();
-    };
-
-    const loadData = async () => {
-        setIsCardLoading(true);
-
-        await getBankCardById(String(editCard))
-            .then((card) => {
-                setFormData({
-                    name: card?.name || '',
-                    description: card?.description || '',
-                });
-            })
-            .finally(() => {
-                setIsCardLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        if (!editCard) {
-            router.replace('/settings/bankCards');
-        }
-    }, [editCard]);
-
-    useFocusEffect(
-        useCallback(() => {
-            if (editCard && typeof editCard === 'string') {
-                loadData();
-            }
-        }, [editCard]),
-    );
 
     return (
-        <VStack className="p-4 flex-1">
-            <Stack.Screen options={{ title: 'Редактировать карту' }} />
-
-            {isCardLoading && <Spinner />}
-
-            {!isCardLoading && (
-                <>
-                    <FormBankCard formData={formData} setFormData={setFormData} invalidName={invalidName} />
-
-                    <ActionButtons
-                        confirm={handleUpdate}
-                        cancel={handleCancel}
-                        isPending={isPendingUpdate}
-                        confirmText="Сохранить"
-                    />
-                </>
+        <VStack className="p-4 flex-1" space="2xl">
+            <Stack.Screen options={{ title: 'Добавить банковскую карту' }} />
+            {data && (
+                <FormBankCard
+                    initialData={data}
+                    isPending={isPending.update}
+                    btnSubmit={{ title: 'Сохранить', onPress: handleEditBankCard }}
+                />
             )}
         </VStack>
     );

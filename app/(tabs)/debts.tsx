@@ -1,10 +1,11 @@
-import { ArchiveLink } from '@/components/pages/debts/ArchiveLink';
-import { HStack } from '@/components/ui/hstack';
 import { ActiveDebtsList } from '@components/pages/debts/ActiveDebtsList/ActiveDebtsList';
+import { ArchiveLink } from '@components/pages/debts/ArchiveLink';
 import { ToggleDebtor } from '@components/pages/debts/ToggleDebtor';
 import { TotalDebt } from '@components/pages/debts/TotalDebt';
 import { Fab } from '@components/shared/Fab';
 import { Box } from '@components/ui/box';
+import { HStack } from '@components/ui/hstack';
+import { DEBT_QUERY_KEYS } from '@constants/queryKeys';
 import type { DebtorType } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,14 +24,14 @@ export default function Debts() {
 
     useFocusEffect(
         useCallback(() => {
-            queryClient.invalidateQueries({ queryKey: ['activeDebtsGrouped'] });
+            queryClient.invalidateQueries({ queryKey: [DEBT_QUERY_KEYS.ACTIVE_DEBTS] });
         }, [queryClient]),
     );
 
     return (
         <Box className="flex-1 gap-5 pt-4 mb-[-12px]">
             <HStack className="justify-between items-center gap-3">
-                <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} style="flex-1" />
+                <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
                 <ArchiveLink />
             </HStack>
 

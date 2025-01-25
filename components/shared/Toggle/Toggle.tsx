@@ -5,15 +5,13 @@ import { ToggleButton } from './ToggleButton';
 interface ToggleProps {
     active: string;
     items: { title: string; value: string }[];
-    style?: string;
+    className?: string;
     setActive: (active: string) => void;
 }
 
-export function Toggle({ active, items, style, setActive }: ToggleProps) {
-    const toggleStyle = `h-[58px] p-[4px] bg-neutral-800 rounded-2xl flex-none ${style}`;
-
+export function Toggle({ active, items, className, setActive }: ToggleProps) {
     return (
-        <HStack className={toggleStyle} space="sm">
+        <HStack className={`h-[58px] p-[4px] bg-neutral-800 rounded-2xl flex-none ${className}`} space="sm">
             {items.map((item) => (
                 <ToggleButton
                     key={item.value}

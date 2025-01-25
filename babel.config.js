@@ -28,6 +28,7 @@ module.exports = function (api) {
                         '@repositories': './repositories',
                         '@managers': './domain/managers',
                         '@keys': './constants',
+                        '@constants': './constants',
                         'tailwind.config': './tailwind.config.js',
                     },
                 },

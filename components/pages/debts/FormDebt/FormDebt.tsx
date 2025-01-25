@@ -22,10 +22,11 @@ const DEBT_TYPE = {
 
 interface FormDebtProps {
     initialData?: Partial<DebtFormData>;
+    isPending?: boolean;
     btnSubmit: { title: string; onPress: (formData: DebtFormData) => Promise<void> };
 }
 
-export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
+export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) => {
     const [invalidDebtorName, setInvalidDebtorName] = useState(false);
     const [invalidAmount, setInvalidAmount] = useState(false);
 
@@ -38,6 +39,22 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
         date: initialData?.date ?? '',
         description: initialData?.description ?? '',
     });
+
+    const debtorTypeItems = [
+        { title: 'Я должен', value: DEBTOR_TYPE.I },
+        { title: 'Мне должны', value: DEBTOR_TYPE.ME },
+    ];
+
+    const debtTypeItems = [
+        { title: 'Деньги', value: DEBT_TYPE.MONEY },
+        { title: 'Другое', value: DEBT_TYPE.OTHER },
+    ];
+
+    const currencyItems = [
+        { title: CURRENCY.RUB, value: CURRENCY.RUB },
+        { title: CURRENCY.EUR, value: CURRENCY.EUR },
+        { title: CURRENCY.USD, value: CURRENCY.USD },
+    ];
 
     const handleSubmit = () => {
         if (validateFormData()) {
@@ -95,19 +112,13 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
                         <Toggle
                             active={formData.debtorType}
                             setActive={(value) => setFormData({ ...formData, debtorType: value as DebtorType })}
-                            items={[
-                                { title: 'Я должен', value: DEBTOR_TYPE.I },
-                                { title: 'Мне должны', value: DEBTOR_TYPE.ME },
-                            ]}
+                            items={debtorTypeItems}
                         />
 
                         <Toggle
                             active={formData.type}
                             setActive={(value) => setFormData({ ...formData, type: value as DebtType })}
-                            items={[
-                                { title: 'Деньги', value: DEBT_TYPE.MONEY },
-                                { title: 'Другое', value: DEBT_TYPE.OTHER },
-                            ]}
+                            items={debtTypeItems}
                         />
                     </VStack>
 
@@ -147,11 +158,7 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
                                     style="flex-1"
                                     active={formData.currency}
                                     setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
-                                    items={[
-                                        { title: CURRENCY.RUB, value: CURRENCY.RUB },
-                                        { title: CURRENCY.EUR, value: CURRENCY.EUR },
-                                        { title: CURRENCY.USD, value: CURRENCY.USD },
-                                    ]}
+                                    items={currencyItems}
                                 />
                             )}
                         </HStack>
@@ -180,7 +187,7 @@ export const FormDebt = ({ initialData, btnSubmit }: FormDebtProps) => {
             <ActionButtons
                 confirm={handleSubmit}
                 cancel={handleCancel}
-                //isPending={isPendingAdd}
+                isPending={isPending}
                 confirmText={btnSubmit.title}
             />
         </VStack>

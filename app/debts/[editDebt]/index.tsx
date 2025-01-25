@@ -1,9 +1,10 @@
-import { FormDebt } from '@/components/pages/debts/FormDebt';
-import { Box } from '@/components/ui/box';
-import { debtManager } from '@/domain/managers/debtManager';
-import { paramsToastMessageProps, useToastMessage } from '@/hooks/useToastMessage';
-import { DebtFormData } from '@/types/debts';
+import { FormDebt } from '@components/pages/debts/FormDebt';
+import { Box } from '@components/ui/box';
+import { DEBT_QUERY_KEYS } from '@constants/queryKeys';
+import { DebtFormData } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
+import { paramsToastMessageProps, useToastMessage } from '@hooks/useToastMessage';
+import { debtManager } from '@managers/debtManager';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
@@ -13,10 +14,10 @@ export default function EditDebtScreen() {
 
     const showToast = useToastMessage();
 
-    const { editDebt } = useDebts();
+    const { editDebt, isPending } = useDebts();
 
     const { data } = useQuery({
-        queryKey: ['debt', debtId],
+        queryKey: [DEBT_QUERY_KEYS.DEBT, debtId],
         queryFn: async () => {
             return debtManager.getDebtById(debtId.toString());
         },
@@ -32,7 +33,7 @@ export default function EditDebtScreen() {
 
         return await editDebt(debtId.toString(), formData)
             .then(() => {
-                queryClient.invalidateQueries({ queryKey: ['debt', debtId] });
+                queryClient.invalidateQueries({ queryKey: [DEBT_QUERY_KEYS.DEBT, debtId] });
             })
             .catch(() => {
                 showToast(errorMessageParams);
@@ -42,7 +43,14 @@ export default function EditDebtScreen() {
     return (
         <Box className="p-4 pt-1 flex-1">
             <Stack.Screen options={{ title: 'Изменить долг' }} />
-            {data && <FormDebt initialData={data} btnSubmit={{ title: 'Сохранить', onPress: handleEditDebt }} />}
+
+            {data && (
+                <FormDebt
+                    initialData={data}
+                    isPending={isPending.update}
+                    btnSubmit={{ title: 'Сохранить', onPress: handleEditDebt }}
+                />
+            )}
         </Box>
     );
 }

@@ -9,7 +9,7 @@ export const BankCardSecurityDisclaimer = () => (
             <ShieldAlert size={50} color="#a3a3a3" className="flex-none" />
 
             <Text className="text-neutral-400 w-[80%] leading-5" size="md">
-                Мы не передаем ваши данные третьим лицам и не используем их для личных целей.
+                Мы не передаем ваши данные о картах третьим лицам и не используем их для личных целей.
             </Text>
         </HStack>
     </GradientContainer>

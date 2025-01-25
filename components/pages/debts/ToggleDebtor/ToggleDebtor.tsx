@@ -3,11 +3,11 @@ import type { DebtorType } from '@customTypes/debts';
 
 interface ToggleDebtorProps {
     debtsTypeActive: DebtorType;
-    style?: string;
+    className?: string;
     onPress: (value: DebtorType) => void;
 }
 
-export const ToggleDebtor = ({ debtsTypeActive, onPress, style }: ToggleDebtorProps) => {
+export const ToggleDebtor = ({ debtsTypeActive, onPress, className }: ToggleDebtorProps) => {
     const items = [
         { title: 'Я должен', value: 'i' },
         { title: 'Мне должны', value: 'me' },
@@ -18,7 +18,7 @@ export const ToggleDebtor = ({ debtsTypeActive, onPress, style }: ToggleDebtorPr
             active={debtsTypeActive}
             setActive={(value) => onPress(value as DebtorType)}
             items={items}
-            style={style}
+            className={className}
         />
     );
 };

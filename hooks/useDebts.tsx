@@ -1,7 +1,7 @@
-import { debtRepository } from '@/repositories/debtRepository';
 import type { Debt, DebtFormData, DebtsGrouped } from '@customTypes/debts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
 import { debtManager } from '@managers/debtManager';
+import { debtRepository } from '@repositories/debtRepository';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useDebts = () => {
@@ -39,6 +39,14 @@ export const useDebts = () => {
                 });
             },
         }),
+    };
+
+    const isPending = {
+        complete: mutations.completeDebt.isPending,
+        restore: mutations.restoreDebt.isPending,
+        delete: mutations.deleteDebt.isPending,
+        add: mutations.addDebt.isPending,
+        update: mutations.updateDebt.isPending,
     };
 
     const handleAsyncOperation = async <T,>(operation: Promise<T>): Promise<T | void> => {
@@ -111,5 +119,6 @@ export const useDebts = () => {
         restoreDebt,
         addDebt,
         editDebt,
+        isPending,
     };
 };
