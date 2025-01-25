@@ -1,7 +1,7 @@
 import type { BankCardFormData } from '@customTypes/bankCard';
-import { BANK_CARDS_QUERY_KEYS, CASHBACK_QUERY_KEYS } from '@keys/queryKeys';
+import { CASHBACK_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
-import { bankCardRepository } from '@repositories/bankCardRepository';
+import { cashbackRepository } from '@repositories/cashbackRepository';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { handleAsyncOperation } from '@utils/handleAsyncOperation';
 
@@ -18,13 +18,13 @@ export const useCashback = () => {
         add: useMutation({
             mutationFn: bankCardManager.addBankCard,
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
+                queryClient.invalidateQueries({ queryKey: [CASHBACK_QUERY_KEYS.CASHBACK] });
             },
         }),
         update: useMutation({
             mutationFn: bankCardManager.updateBankCard,
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
+                queryClient.invalidateQueries({ queryKey: [CASHBACK_QUERY_KEYS.CASHBACK] });
             },
         }),
     };
@@ -35,9 +35,9 @@ export const useCashback = () => {
         update: mutations.update.isPending,
     };
 
-    const bankCardsQuery = useQuery({
-        queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS],
-        queryFn: () => bankCardRepository.getAll(),
+    const cashbackQuery = useQuery({
+        queryKey: [CASHBACK_QUERY_KEYS.CASHBACK],
+        queryFn: () => cashbackRepository.getAll(),
     });
 
     const addCashback = (formData: BankCardFormData) => handleAsyncOperation(mutations.add.mutateAsync(formData));
@@ -56,7 +56,7 @@ export const useCashback = () => {
 
     return {
         isPending,
-        bankCardsQuery,
+        cashbackQuery,
         deleteCashback,
         addCashback,
         editCashback,

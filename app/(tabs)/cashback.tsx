@@ -3,114 +3,114 @@ import { CashbackCard } from '@components/pages/cashback/CashbackCard';
 import { EmptyBankCardState } from '@components/pages/cashback/EmptyBankCardState';
 import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
 import { Fab } from '@components/shared/Fab';
+import { Spinner } from '@components/shared/Spinner';
 import { Box } from '@components/ui/box';
-import { Spinner } from '@components/ui/spinner';
-import type { BankCard } from '@customTypes/bankCard';
-import type { CashbackItem, CashbackItemStorage } from '@customTypes/cashback';
+import { BANK_CARDS_QUERY_KEYS, CASHBACK_QUERY_KEYS } from '@constants/queryKeys';
+import type { CashbackItem } from '@customTypes/cashback';
+import { useBankCards } from '@hooks/useBankCards';
+import { useCashback } from '@hooks/useCashback';
 import { useFocusEffect } from '@react-navigation/native';
-import { getBankCards } from '@services/bankCardService';
-import { getCashback } from '@services/cashbackService';
-import { CashbackCategories } from '@storage/cashbackCategories';
-import { useRouter } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { getMatchedCashbackCategories } from '@utils/getMatchedCashbackCategories';
+import { getMatchedCashbackItems } from '@utils/getMatchedCashbackItems';
+import { router } from 'expo-router';
 import { Percent } from 'lucide-react-native';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
 
 export default function CashbackScreen() {
-    const router = useRouter();
+    const queryClient = useQueryClient();
 
-    const [bankCards, setBankCards] = useState<BankCard[]>([]);
-    const [cashback, setCashback] = useState<CashbackItem[]>([]);
-    const [loadingBankCards, setLoadingBankCards] = useState(false);
+    const { cashbackQuery, isPending } = useCashback();
+    const { bankCardsQuery } = useBankCards();
 
     const editCashbackSheetRef = useRef<ActionSheetRef>(null);
 
-    const getMatchedCashbackItems = (cashbackItemsStorage: CashbackItemStorage[], cards: BankCard[]) => {
-        return cashbackItemsStorage.filter((item) => cards.find((card: BankCard) => card.id === item.id));
+    const { data: bankCards = [] } = bankCardsQuery;
+    const { data: cashback = [] } = cashbackQuery;
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [cashbackItems, setCashbackItems] = useState<CashbackItem[]>([]);
+
+    const initCashbackList = async () => {
+        try {
+            setIsLoading(true);
+
+            const matchedCashbackItems = getMatchedCashbackItems(cashback, bankCards);
+
+            if (!matchedCashbackItems.length) {
+                setCashbackItems([]);
+                return;
+            }
+
+            const cashbackMap = new Map(cashback.map((item) => [item.id, item]));
+            const bankCardsMap = new Map(bankCards.map((card) => [card.id, card]));
+
+            const cashbackItems = matchedCashbackItems
+                .map((item) => {
+                    const cashbackItem = cashbackMap.get(item.id);
+                    if (!cashbackItem) return null;
+
+                    const cashbackCategories = getMatchedCashbackCategories(cashbackItem);
+                    const card = bankCardsMap.get(item.id);
+
+                    if (!card) return null;
+
+                    return {
+                        card,
+                        cashbackCategories,
+                    } satisfies CashbackItem;
+                })
+                .filter((item): item is CashbackItem => item !== null);
+
+            setCashbackItems(cashbackItems);
+        } catch (error) {
+            console.error('Ошибка при инициализации списка кэшбэка:', error);
+            setCashbackItems([]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const getMatchedCashbackCategories = (cashbackItem: CashbackItemStorage) => {
-        return cashbackItem.cashbackCategories
-            .map((cashbackCategory) => {
-                const category = CashbackCategories.find((cashback) => cashback.code === cashbackCategory.code);
-
-                if (!category) return;
-
-                return {
-                    ...category,
-                    precent: cashbackCategory.precent,
-                };
-            })
-            .filter(Boolean);
+    const openEditCashbackSheet = () => {
+        editCashbackSheetRef.current?.show();
     };
 
-    const initCashbackList = async (cards: BankCard[]) => {
-        const cashbackItemsStorage = await getCashback();
-
-        if (!cashbackItemsStorage) return;
-
-        const matchedCashbackItems = getMatchedCashbackItems(cashbackItemsStorage, cards);
-
-        const cashbackItems = matchedCashbackItems
-            .map((item) => {
-                const cashbackItem = cashbackItemsStorage.find((cashback) => cashback.id === item.id);
-
-                if (!cashbackItem) return;
-
-                const cashbackCategories = getMatchedCashbackCategories(cashbackItem);
-
-                const card = cards.find((card: BankCard) => card.id === item.id);
-
-                if (!card) return;
-
-                return {
-                    card,
-                    cashbackCategories,
-                };
-            })
-            .filter(Boolean) as CashbackItem[];
-
-        setCashback(cashbackItems);
+    const closeEditCashbackSheet = () => {
+        editCashbackSheetRef.current?.hide();
     };
 
     const handleSelectCard = (id: string) => {
         router.push(`/cashback/${id}`);
-        editCashbackSheetRef.current?.hide();
+        closeEditCashbackSheet();
     };
 
-    const loadData = async () => {
-        try {
-            setLoadingBankCards(true);
-
-            const cards = await getBankCards();
-
-            if (cards.length > 0) {
-                setBankCards(cards);
-                await initCashbackList(cards);
-            }
-        } catch (error) {
-            console.error('Ошибка при загрузке данных:', error);
-        } finally {
-            setLoadingBankCards(false);
+    useEffect(() => {
+        if (bankCards && cashback) {
+            initCashbackList();
         }
-    };
+    }, [bankCards, cashback]);
 
     useFocusEffect(
         useCallback(() => {
-            loadData();
-        }, []),
+            queryClient.invalidateQueries({ queryKey: [CASHBACK_QUERY_KEYS.CASHBACK] });
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
+        }, [queryClient]),
     );
 
     return (
         <Box className="pt-4 flex-1">
-            {loadingBankCards && <Spinner size="large" color="#166534" className="mt-5" />}
+            {isLoading && <Spinner />}
+            {!isLoading && !bankCards.length && <EmptyBankCardState />}
 
-            {!loadingBankCards && !bankCards && <EmptyBankCardState />}
+            {!isLoading && bankCards.length && (
+                <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackSheet} />
+            )}
 
-            {cashback.length > 0 && (
+            {cashback.length && (
                 <FlatList
-                    data={cashback}
+                    data={cashbackItems}
                     ItemSeparatorComponent={() => <Box className="h-4" />}
                     contentContainerStyle={{ padding: 0 }}
                     keyExtractor={(item) => item.card.id}
@@ -120,10 +120,6 @@ export default function CashbackScreen() {
                         </Pressable>
                     )}
                 />
-            )}
-
-            {bankCards && (
-                <Fab label="Изменить кешбек" icon={Percent} onPress={() => editCashbackSheetRef.current?.show()} />
             )}
 
             <ActionSheet ref={editCashbackSheetRef}>

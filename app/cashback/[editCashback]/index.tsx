@@ -306,7 +306,7 @@ export default function EditCashbackScreen() {
                                                         {cashbackCategoryName(item.code)}
                                                     </Text>
                                                     <Text className="ml-auto" size="2xl">
-                                                        {item.precent}%
+                                                        {item.percent}%
                                                     </Text>
                                                 </HStack>
                                             </Pressable>

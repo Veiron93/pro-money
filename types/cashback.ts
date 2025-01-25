@@ -2,20 +2,20 @@ import type { BankCard } from '@/types/bankCard';
 import { ReactElement } from 'react';
 import { SvgProps } from 'react-native-svg';
 
-interface CashbackCategoryStorage {
+interface CashbackCategoryData {
     code: string;
-    precent: number;
+    percent: number;
 }
 
-export interface CashbackItemStorage {
+export interface CashbackItemData {
     id: string;
-    cashbackCategories: CashbackCategoryStorage[];
+    cashbackCategories: CashbackCategoryData[];
 }
 
 export interface CashbackCategory {
     code: string;
     name: string;
-    precent: number;
+    percent: number;
     icon: ReactElement<SvgProps>;
 }
 
