@@ -134,6 +134,7 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                         />
                     </VStack>
 
+                    {/* TODO: сделать валидацию что бы можно было сумму только в цифрах */}
                     <VStack space="md">
                         <Text size="xl">
                             {formData.type === DEBT_TYPE.MONEY
@@ -155,7 +156,7 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
 
                             {formData.type === DEBT_TYPE.MONEY && (
                                 <Toggle
-                                    style="flex-1"
+                                    className="flex-1"
                                     active={formData.currency}
                                     setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
                                     items={currencyItems}

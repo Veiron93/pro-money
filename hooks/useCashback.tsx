@@ -1,26 +1,27 @@
 import type { BankCardFormData } from '@customTypes/bankCard';
-import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
+import { BANK_CARDS_QUERY_KEYS, CASHBACK_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
 import { bankCardRepository } from '@repositories/bankCardRepository';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { handleAsyncOperation } from '@utils/handleAsyncOperation';
 
-export const useBankCards = () => {
+export const useCashback = () => {
     const queryClient = useQueryClient();
 
     const mutations = {
-        deleteBankCard: useMutation({
+        delete: useMutation({
             mutationFn: bankCardManager.deleteBankCard,
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
+                queryClient.invalidateQueries({ queryKey: [CASHBACK_QUERY_KEYS.CASHBACK] });
             },
         }),
-        addBankCard: useMutation({
+        add: useMutation({
             mutationFn: bankCardManager.addBankCard,
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
             },
         }),
-        updateBankCard: useMutation({
+        update: useMutation({
             mutationFn: bankCardManager.updateBankCard,
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
@@ -29,17 +30,9 @@ export const useBankCards = () => {
     };
 
     const isPending = {
-        delete: mutations.deleteBankCard.isPending,
-        add: mutations.addBankCard.isPending,
-        update: mutations.updateBankCard.isPending,
-    };
-
-    const handleAsyncOperation = async <T,>(operation: Promise<T>): Promise<T | void> => {
-        try {
-            return await operation;
-        } catch (e) {
-            console.log(e);
-        }
+        delete: mutations.delete.isPending,
+        add: mutations.add.isPending,
+        update: mutations.update.isPending,
     };
 
     const bankCardsQuery = useQuery({
@@ -47,26 +40,25 @@ export const useBankCards = () => {
         queryFn: () => bankCardRepository.getAll(),
     });
 
-    const addBankCard = (formData: BankCardFormData) =>
-        handleAsyncOperation(mutations.addBankCard.mutateAsync(formData));
+    const addCashback = (formData: BankCardFormData) => handleAsyncOperation(mutations.add.mutateAsync(formData));
 
-    const deleteBankCard = (id: string) => handleAsyncOperation(mutations.deleteBankCard.mutateAsync(id));
+    const deleteCashback = (id: string) => handleAsyncOperation(mutations.delete.mutateAsync(id));
 
-    const editBankCard = async (cardId: string, formData: BankCardFormData) => {
+    const editCashback = async (cardId: string, formData: BankCardFormData) => {
         const item = await handleAsyncOperation(bankCardManager.enrichBankCardWithUpdates(cardId, formData));
 
         if (!item) {
             return;
         }
 
-        return await handleAsyncOperation(mutations.updateBankCard.mutateAsync(item));
+        return await handleAsyncOperation(mutations.update.mutateAsync(item));
     };
 
     return {
         isPending,
         bankCardsQuery,
-        deleteBankCard,
-        addBankCard,
-        editBankCard,
+        deleteCashback,
+        addCashback,
+        editCashback,
     };
 };
