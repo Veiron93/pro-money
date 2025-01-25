@@ -1,6 +1,7 @@
 import { Box } from '@components/ui/box';
 import { Heading } from '@components/ui/heading';
 import { Text } from '@components/ui/text';
+import { LINK_FEEDBACK, NUMBER_CARD_DONATE } from '@constants/app';
 import * as Clipboard from 'expo-clipboard';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
@@ -9,14 +10,12 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 export default function Help() {
-    const NUMBER_CARD = '2204 1201 1077 6404';
-
     const [isCopied, setIsCopied] = useState(false);
 
     const onCopy = async () => {
         try {
             setIsCopied(true);
-            await Clipboard.setStringAsync(NUMBER_CARD.replace(/\s/g, ''));
+            await Clipboard.setStringAsync(NUMBER_CARD_DONATE.replace(/\s/g, ''));
             setTimeout(() => setIsCopied(false), 1000);
         } catch (error) {
             console.error('Ошибка при копировании:', error);
@@ -35,7 +34,7 @@ export default function Help() {
 
                 <Pressable onPress={onCopy} className="flex-row justify-between bg-red-800 p-4">
                     <Text className="text-white" size="xl">
-                        {NUMBER_CARD}
+                        {NUMBER_CARD_DONATE}
                     </Text>
                     <Box>{isCopied ? <Check color="white" /> : <Copy color="white" />}</Box>
                 </Pressable>
@@ -46,7 +45,7 @@ export default function Help() {
                     Связь с разработчиком!
                 </Heading>
 
-                <Link href="https://vk.com/veiron93" target="_blank">
+                <Link href={LINK_FEEDBACK} target="_blank">
                     <Text className="text-neutral-400" size="xl">
                         Дмитрий Юдин
                     </Text>
