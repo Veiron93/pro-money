@@ -1,4 +1,4 @@
-import type { BankCard } from '@/types/bankCard';
+import type { BankCard } from '@customTypes/bankCard';
 import { ReactElement } from 'react';
 import { SvgProps } from 'react-native-svg';
 

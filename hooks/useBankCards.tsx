@@ -1,8 +1,11 @@
-import type { BankCardFormData } from '@customTypes/bankCard';
+import type { BankCard, BankCardFormData, BankCardWithCashback } from '@customTypes/bankCard';
+import type { CashbackCategory } from '@customTypes/cashback';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
 import { bankCardRepository } from '@repositories/bankCardRepository';
+import { CashbackCategories } from '@storage/cashbackCategories';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { handleAsyncOperation } from '@utils/handleAsyncOperation';
 
 export const useBankCards = () => {
     const queryClient = useQueryClient();
@@ -34,18 +37,69 @@ export const useBankCards = () => {
         update: mutations.updateBankCard.isPending,
     };
 
-    const handleAsyncOperation = async <T,>(operation: Promise<T>): Promise<T | void> => {
-        try {
-            return await operation;
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
     const bankCardsQuery = useQuery({
         queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS],
         queryFn: () => bankCardRepository.getAll(),
     });
+
+    const getBankCard = (id: string) =>
+        useQuery({
+            queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD, id],
+            queryFn: () => bankCardRepository.getById(id),
+            enabled: !!id,
+        });
+
+    const getCashbackCategoriesMap = () => {
+        return new Map(CashbackCategories.map((category) => [category.code, category]));
+    };
+
+    const getBankCardsWithCashback = (): BankCardWithCashback[] => {
+        const bankCards = bankCardsQuery.data;
+
+        if (!bankCards?.length) {
+            return [];
+        }
+
+        const cashbackCategoriesMap = getCashbackCategoriesMap();
+
+        return bankCards
+            .filter((bankCard) => bankCard.cashbackCategories?.length)
+            .map((bankCard) => ({
+                bankCard,
+                cashbackCategories: bankCard.cashbackCategories?.map(({ code }) => cashbackCategoriesMap.get(code)),
+            })) as BankCardWithCashback[];
+    };
+
+    const getBankCardWithCashback = (id: string): BankCardWithCashback | undefined => {
+        const bankCardItem = getBankCard(id).data;
+
+        if (!bankCardItem) return;
+
+        const cashbackCategoriesMap = getCashbackCategoriesMap();
+
+        if (!bankCardItem.cashbackCategories?.length) {
+            return { bankCard: bankCardItem, cashbackCategories: [] };
+        }
+
+        const cashbackCategories = bankCardItem.cashbackCategories.reduce<CashbackCategory[]>(
+            (acc, { code, percent }) => {
+                const categoryData = cashbackCategoriesMap.get(code);
+
+                if (categoryData) {
+                    acc.push({
+                        code,
+                        percent,
+                        name: categoryData.name,
+                        icon: categoryData.icon,
+                    });
+                }
+                return acc;
+            },
+            [],
+        );
+
+        return { bankCard: bankCardItem, cashbackCategories };
+    };
 
     const addBankCard = (formData: BankCardFormData) =>
         handleAsyncOperation(mutations.addBankCard.mutateAsync(formData));
@@ -68,5 +122,8 @@ export const useBankCards = () => {
         deleteBankCard,
         addBankCard,
         editBankCard,
+        getBankCard,
+        getBankCardsWithCashback,
+        getBankCardWithCashback,
     };
 };
