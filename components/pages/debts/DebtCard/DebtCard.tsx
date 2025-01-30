@@ -2,6 +2,7 @@ import { GradientContainer } from '@components/shared/GradientContainer';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
+import { CURRENCY } from '@constants/currency';
 import { Debt } from '@customTypes/debts';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
@@ -12,12 +13,22 @@ dayjs.extend(relativeTime);
 dayjs.locale('ru');
 
 export const DebtCard = ({ data }: { data: Debt }) => {
-    const { debtorName, amount, date, description, type, currency } = data;
+    const { debtorName, moneyAmount, otherAmount, date, description, type, currency, isCompleted } = data;
 
-    const AmountText = ({ text }: { text: string }) => {
+    const MoneyAmount = ({ value, currency }: { value: string; currency: CURRENCY }) => {
+        const formattedText = value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : '0';
+
         return (
             <Text className="text-green-600" size="2xl">
-                {text}
+                {formattedText} {currency}
+            </Text>
+        );
+    };
+
+    const OtherAmount = ({ value }: { value: string }) => {
+        return (
+            <Text className="text-green-600" size="sm">
+                {value}
             </Text>
         );
     };
@@ -51,12 +62,12 @@ export const DebtCard = ({ data }: { data: Debt }) => {
                 <HStack space="md" className="items-center justify-between">
                     <Text size="2xl">{debtorName}</Text>
                     <HStack className="flex-none" space="xs">
-                        <AmountText text={amount} />
-                        {type === 'money' && <AmountText text={currency} />}
+                        {type === 'money' && <MoneyAmount value={moneyAmount} currency={currency} />}
+                        {type === 'other' && <OtherAmount value={otherAmount} />}
                     </HStack>
                 </HStack>
 
-                {date && <RemainingTime date={date} />}
+                {date && !isCompleted && <RemainingTime date={date} />}
 
                 {description && (
                     <Text className="text-neutral-400" size="md">

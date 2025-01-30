@@ -32,9 +32,12 @@ export const TotalDebt = ({ debts, debtsTypeActive }: DebtListProps) => {
             };
 
             debtsList.forEach((debt) => {
-                const currency = CURRENCIES[debt.currency as keyof typeof CURRENCIES];
-                if (currency) {
-                    total[currency] += Number(debt.amount);
+                if (debt.type === 'money') {
+                    const currency = CURRENCIES[debt.currency as keyof typeof CURRENCIES];
+
+                    if (currency) {
+                        total[currency] += Number(debt.moneyAmount);
+                    }
                 }
             });
 

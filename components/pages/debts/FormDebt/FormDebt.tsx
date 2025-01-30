@@ -39,7 +39,8 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
         type: initialData?.type ?? DEBT_TYPE.MONEY,
         currency: initialData?.currency ?? CURRENCY.RUB,
         debtorName: initialData?.debtorName ?? '',
-        amount: initialData?.amount ?? '',
+        moneyAmount: initialData?.moneyAmount ?? '',
+        otherAmount: initialData?.otherAmount ?? '',
         date: initialData?.date || undefined,
         description: initialData?.description ?? '',
         level: initialData?.level ?? LEVELS.LOW,
@@ -84,7 +85,10 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
             setInvalidDebtorName(false);
         }
 
-        if (formData.amount.length === 0) {
+        if (
+            (formData.type === DEBT_TYPE.MONEY && formData.moneyAmount.length === 0) ||
+            (formData.type === DEBT_TYPE.OTHER && formData.otherAmount.length === 0)
+        ) {
             setInvalidAmount(true);
             return false;
         } else {
@@ -105,11 +109,18 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
             type: DEBT_TYPE.MONEY,
             currency: CURRENCY.RUB,
             debtorName: '',
-            amount: '',
+            moneyAmount: '',
+            otherAmount: '',
             date: undefined,
             description: '',
             level: LEVELS.LOW,
         });
+    };
+
+    const handleMoneyAmountChange = (value: string) => {
+        const numericValue = value.replace(/[^0-9.,]/g, '');
+        const formattedValue = numericValue.replace(',', '.').replace(/(\..*)\./g, '$1');
+        setFormData({ ...formData, moneyAmount: formattedValue });
     };
 
     return (
@@ -139,10 +150,10 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                             isInvalid={invalidDebtorName}
                             value={formData.debtorName}
                             onChange={(value) => setFormData({ ...formData, debtorName: value })}
+                            maxLength={15}
                         />
                     </VStack>
 
-                    {/* TODO: сделать валидацию что бы можно было сумму только в цифрах */}
                     <VStack space="md">
                         <Text size="xl">
                             {formData.type === DEBT_TYPE.MONEY
@@ -153,21 +164,32 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                         </Text>
 
                         <HStack space="md" className="items-center">
-                            <Input
-                                isInvalid={invalidAmount}
-                                onChange={(value) => setFormData({ ...formData, amount: value })}
-                                className={`${formData.type === DEBT_TYPE.MONEY ? 'flex-1' : 'w-full'}`}
-                                value={formData.amount}
-                                placeholder={formData.type === DEBT_TYPE.MONEY ? '1000' : 'Книгу'}
-                                keyboardType={formData.type === DEBT_TYPE.MONEY ? 'numeric' : 'default'}
-                            />
-
-                            {formData.type === DEBT_TYPE.MONEY && (
-                                <Toggle
-                                    className="flex-1"
-                                    active={formData.currency}
-                                    setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
-                                    items={currencyItems}
+                            {formData.type === DEBT_TYPE.MONEY ? (
+                                <>
+                                    <Input
+                                        isInvalid={invalidAmount}
+                                        onChange={handleMoneyAmountChange}
+                                        className="flex-1"
+                                        value={formData.moneyAmount}
+                                        placeholder="1000"
+                                        keyboardType="numeric"
+                                        maxLength={11}
+                                    />
+                                    <Toggle
+                                        className="flex-1"
+                                        active={formData.currency}
+                                        setActive={(value) => setFormData({ ...formData, currency: value as CURRENCY })}
+                                        items={currencyItems}
+                                    />
+                                </>
+                            ) : (
+                                <Input
+                                    isInvalid={invalidAmount}
+                                    onChange={(value) => setFormData({ ...formData, otherAmount: value })}
+                                    className="w-full"
+                                    value={formData.otherAmount}
+                                    placeholder="Книгу"
+                                    maxLength={20}
                                 />
                             )}
                         </HStack>
@@ -230,6 +252,7 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                             onChange={(value) => setFormData({ ...formData, description: value })}
                             value={formData.description}
                             placeholder={formData.type === DEBT_TYPE.MONEY ? 'За обед в столовой' : 'Буратино'}
+                            maxLength={100}
                         />
                     </VStack>
                 </VStack>

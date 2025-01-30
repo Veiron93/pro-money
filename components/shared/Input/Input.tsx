@@ -8,12 +8,18 @@ interface InputProps extends IInputFieldProps {
     value?: string;
     onChange: (value: string) => void;
     keyboardType?: KeyboardTypeOptions;
+    maxLength?: number;
 }
 
 export const Input = ({ onChange, ...props }: InputProps) => {
     return (
         <InputUI {...props} className={`h-[58px] rounded-2xl ${props.className}`} size="xl">
-            <InputField onChangeText={(value) => onChange(value)} value={props.value} placeholder={props.placeholder} />
+            <InputField
+                onChangeText={(value) => onChange(value)}
+                value={props.value}
+                placeholder={props.placeholder}
+                maxLength={props.maxLength}
+            />
         </InputUI>
     );
 };

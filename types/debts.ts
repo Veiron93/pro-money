@@ -10,7 +10,8 @@ export interface Debt {
     debtorName: string;
     type: DebtType;
     currency: CURRENCY;
-    amount: string;
+    moneyAmount: string;
+    otherAmount: string;
     date: Date | undefined;
     description: string;
     isCompleted: boolean;
@@ -22,7 +23,8 @@ export interface DebtFormData {
     debtorName: string;
     type: DebtType;
     currency: CURRENCY;
-    amount: string;
+    moneyAmount: string;
+    otherAmount: string;
     date: Date | undefined;
     description: string;
     level: LEVELS;
