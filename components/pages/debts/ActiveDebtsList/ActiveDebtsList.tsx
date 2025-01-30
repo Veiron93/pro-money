@@ -1,6 +1,9 @@
+import { HStack } from '@/components/ui/hstack';
 import { ActionsButtons } from '@components/pages/debts/ActiveDebtsList/ActionsButtons';
 import { DebtListItem } from '@components/pages/debts/DebtListItem';
 import { Box } from '@components/ui/box';
+import { Text } from '@components/ui/text';
+import { LEVELS, LEVEL_COLORS, LEVEL_ICONS } from '@constants/levels';
 import type { Debt } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
@@ -23,6 +26,20 @@ export const ActiveDebtsList = ({ debts, className }: ActiveDebtsListProps) => {
         });
     };
 
+    const Level = ({ level }: { level: LEVELS }) => {
+        const Icon = level ? LEVEL_ICONS[level] : null;
+        const color = level ? LEVEL_COLORS[level] : '#a3a3a3';
+
+        return (
+            <HStack space="xs" className="items-center ml-auto mr-[8px] ">
+                {Icon && <Icon size={12} className="mr-1" color={color} />}
+                <Text style={{ color }} size="sm">
+                    {level}
+                </Text>
+            </HStack>
+        );
+    };
+
     return (
         <FlatList
             ItemSeparatorComponent={() => <Box className="h-4" />}
@@ -33,6 +50,7 @@ export const ActiveDebtsList = ({ debts, className }: ActiveDebtsListProps) => {
             renderItem={({ item }) => (
                 <DebtListItem data={item}>
                     <ActionsButtons id={item.id} onCompleteDebt={completeDebt} onDeleteDebt={handleDeleteDebt} />
+                    <Level level={item.level} />
                 </DebtListItem>
             )}
         />

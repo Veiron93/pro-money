@@ -1,14 +1,17 @@
 import { ActionButtons } from '@components/shared/ActionButtons';
 import { Input } from '@components/shared/Input';
 import { Toggle } from '@components/shared/Toggle';
+import { Button, ButtonText } from '@components/ui/button';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
 import { DebtFormData, DebtType, DebtorType } from '@customTypes/debts';
+import { useHandleBack } from '@hooks/useHandleBack';
 import { CURRENCY } from '@keys/currency';
-import { router } from 'expo-router';
+import { LEVELS } from '@keys/levels';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
+import { DatePickerInput } from 'react-native-paper-dates';
 
 const DEBTOR_TYPE = {
     I: 'i' as DebtorType,
@@ -29,6 +32,7 @@ interface FormDebtProps {
 export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) => {
     const [invalidDebtorName, setInvalidDebtorName] = useState(false);
     const [invalidAmount, setInvalidAmount] = useState(false);
+    const handleBack = useHandleBack('/debts');
 
     const [formData, setFormData] = useState<DebtFormData>({
         debtorType: initialData?.debtorType ?? DEBTOR_TYPE.I,
@@ -36,8 +40,9 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
         currency: initialData?.currency ?? CURRENCY.RUB,
         debtorName: initialData?.debtorName ?? '',
         amount: initialData?.amount ?? '',
-        date: initialData?.date ?? '',
+        date: initialData?.date || undefined,
         description: initialData?.description ?? '',
+        level: initialData?.level ?? LEVELS.LOW,
     });
 
     const debtorTypeItems = [
@@ -54,6 +59,12 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
         { title: CURRENCY.RUB, value: CURRENCY.RUB },
         { title: CURRENCY.EUR, value: CURRENCY.EUR },
         { title: CURRENCY.USD, value: CURRENCY.USD },
+    ];
+
+    const levelItems = [
+        { title: LEVELS.LOW, value: LEVELS.LOW },
+        { title: LEVELS.MEDIUM, value: LEVELS.MEDIUM },
+        { title: LEVELS.HIGH, value: LEVELS.HIGH },
     ];
 
     const handleSubmit = () => {
@@ -95,13 +106,10 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
             currency: CURRENCY.RUB,
             debtorName: '',
             amount: '',
-            date: '',
+            date: undefined,
             description: '',
+            level: LEVELS.LOW,
         });
-    };
-
-    const handleBack = () => {
-        router.back();
     };
 
     return (
@@ -167,10 +175,52 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
 
                     <VStack space="md">
                         <Text size="xl">До какого времени</Text>
-                        <Input
-                            value={formData.date}
-                            placeholder="01.01.2024"
-                            onChange={(value) => setFormData({ ...formData, date: value })}
+
+                        <HStack space="lg">
+                            <DatePickerInput
+                                locale="ru"
+                                value={formData.date ? new Date(formData.date) : undefined}
+                                onChange={(d) => setFormData({ ...formData, date: d })}
+                                startYear={new Date().getFullYear()}
+                                validRange={{
+                                    startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+                                }}
+                                inputMode="start"
+                                label=" "
+                                mode="outlined"
+                                startWeekOnMonday={true}
+                                withDateFormatInLabel={false}
+                                textColor="white"
+                                style={{ height: 58, marginTop: -6 }}
+                                outlineStyle={{ borderRadius: 16 }}
+                                iconColor="white"
+                                theme={{
+                                    colors: {
+                                        background: 'none',
+                                        primary: 'white',
+                                        outline: '#747474',
+                                    },
+                                }}
+                            />
+
+                            <Button
+                                onPress={() => setFormData({ ...formData, date: undefined })}
+                                className="w-[150px] h-[58px] rounded-2xl"
+                                size="xl"
+                                variant={formData.date ? 'outline' : 'solid'}
+                            >
+                                <ButtonText>Без даты</ButtonText>
+                            </Button>
+                        </HStack>
+                    </VStack>
+
+                    <VStack space="md">
+                        <Text size="xl">Уровень важности</Text>
+
+                        <Toggle
+                            active={formData.level}
+                            setActive={(value) => setFormData({ ...formData, level: value as LEVELS })}
+                            items={levelItems}
                         />
                     </VStack>
 
@@ -179,7 +229,7 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                         <Input
                             onChange={(value) => setFormData({ ...formData, description: value })}
                             value={formData.description}
-                            placeholder={formData.type === DEBT_TYPE.MONEY ? 'За обед в столовой' : 'Гуси лебеди'}
+                            placeholder={formData.type === DEBT_TYPE.MONEY ? 'За обед в столовой' : 'Буратино'}
                         />
                     </VStack>
                 </VStack>

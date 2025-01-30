@@ -1,10 +1,10 @@
-import { CashbackCategory } from './cashback';
+import { CashbackCategory, CashbackCategoryData } from './cashback';
 
 export interface BankCard {
     id: string;
     name: string;
     description?: string;
-    cashbackCategories?: CashbackCategory[];
+    cashbackCategories?: CashbackCategoryData[];
 }
 
 export interface BankCardFormData {

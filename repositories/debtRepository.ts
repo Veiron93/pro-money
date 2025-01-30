@@ -1,15 +1,15 @@
 // Репозиторий - отвечает только за CRUD операции с данными
+import { STORAGE_KEYS } from '@constants/storageKeys';
 import type { Debt } from '@customTypes/debts';
 import { localStorageService } from '@services/storage/localStorageService';
-import { STORAGE_NAMES } from '@storage/names';
 
 export const debtRepository = {
     async getAll(): Promise<Debt[]> {
-        return (await localStorageService.get<Debt[]>(STORAGE_NAMES.DEBTS)) || [];
+        return (await localStorageService.get<Debt[]>(STORAGE_KEYS.DEBTS)) || [];
     },
 
     async save(debts: Debt[]): Promise<void> {
-        await localStorageService.set(STORAGE_NAMES.DEBTS, debts);
+        await localStorageService.set(STORAGE_KEYS.DEBTS, debts);
     },
 
     async getById(id: string): Promise<Debt | null> {

@@ -8,12 +8,14 @@ import { HStack } from '@components/ui/hstack';
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@components/ui/slider';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
+import { BANK_CARDS_QUERY_KEYS } from '@constants/queryKeys';
+import type { CashbackCategoryData } from '@customTypes/cashback';
 import { useBankCards } from '@hooks/useBankCards';
-import { CashbackCategories, CashbackCategory } from '@storage/cashbackCategories';
+import { CashbackCategories } from '@storage/cashbackCategories';
 import { useQueryClient } from '@tanstack/react-query';
-import { Stack, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { AlignJustify, Trash } from 'lucide-react-native';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
 
@@ -25,7 +27,9 @@ export default function EditCashbackScreen() {
     const queryClient = useQueryClient();
 
     const { editCashback: bankCardId } = useLocalSearchParams();
-    const { getBankCardWithCashback } = useBankCards();
+    const { getBankCardWithCashback, getBankCard, updateCashbackCategoriesBankCard } = useBankCards();
+
+    const { data: bankCard } = getBankCard(bankCardId.toString());
 
     const bankCardWithCashback = getBankCardWithCashback(bankCardId.toString());
 
@@ -52,252 +56,68 @@ export default function EditCashbackScreen() {
         deleteAllCategoriesSheetRef.current?.hide();
     };
 
-    const handlerClearBankCardCashback = () => {};
-
     const handleSelectAddCashback = (code: string) => {
         setSelectedCashbackCategoryCode(code);
+
+        const existingCategory = bankCard?.cashbackCategories?.find((category) => category.code === code);
+        const percent = existingCategory ? existingCategory.percent : 1;
+
+        setSelectedCashbackCategoryPercent(percent);
         setStepAddCashback(2);
     };
 
-    const handleAddCashback = () => {};
+    const handleClearBankCardCashback = () => {
+        updateCashbackCategoriesBankCard(bankCardId.toString(), []).then(() => {
+            closeDeleteAllCategoriesSheet();
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
+        });
+    };
 
-    const handleCancelAddCashback = () => {};
+    const handleAddCashback = () => {
+        const categoryCashbackData = {
+            code: selectedCashbackCategoryCode,
+            percent: selectedCashbackCategoryPercent,
+        };
 
-    const handleEditCashbackCategory = (item: CashbackCategory) => {};
+        const categoriesCashbackBankCard: CashbackCategoryData[] = bankCard?.cashbackCategories || [];
 
-    const handleDeleteCashbackCategory = (code: string) => {};
+        const indexIsAddedCashbackCategory = categoriesCashbackBankCard.findIndex(
+            (cashbackCategory) => cashbackCategory.code === categoryCashbackData.code,
+        );
 
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
-    //     }, [queryClient]),
-    // );
+        if (indexIsAddedCashbackCategory !== -1) {
+            categoriesCashbackBankCard[indexIsAddedCashbackCategory].percent = categoryCashbackData.percent;
+        } else {
+            categoriesCashbackBankCard.push(categoryCashbackData);
+        }
 
-    // const router = useRouter();
-    // const { editCashback } = useLocalSearchParams();
+        updateCashbackCategoriesBankCard(bankCardId.toString(), categoriesCashbackBankCard).then(() => {
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
+            resetCashbackParams();
+        });
+    };
 
-    // const [bankCard, setBankCard] = useState<BankCard>();
-    // const [bankCardCashbackCategories, setBankCardCashbackCategories] = useState<CashbackItem[]>([]);
+    const resetCashbackParams = () => {
+        closeEditCashbackSheet();
+        setStepAddCashback(1);
+        setSelectedCashbackCategoryPercent(1);
+    };
 
-    // const [stepAddCashback, setStepAddCashback] = useState<step>(1);
+    const handleEditCashbackCategory = (item: CashbackCategoryData) => {
+        setStepAddCashback(2);
+        setSelectedCashbackCategoryCode(item.code);
+        setSelectedCashbackCategoryPercent(item.percent);
+        openEditCashbackSheet();
+    };
 
-    // const [selectedCashbackCategoryPrecent, setSelectedCashbackCategoryPrecent] = useState(1);
-    // const [selectedCashbackCategoryCode, setSelectedCashbackCategoryCode] = useState('');
+    const handleDeleteCashbackCategory = (code: string) => {
+        const categoriesCashbackBankCard =
+            bankCard?.cashbackCategories?.filter((category) => category.code !== code) || [];
 
-    // const [isLoadingClearBankCardCashback, setIsLoadingClearBankCardCashback] = useState(false);
-
-    // const deleteAllCategoriesSheetRef = useRef<ActionSheetRef>(null);
-    // const editCashbackSheetRef = useRef<ActionSheetRef>(null);
-
-    // const getBankCard = async () => {
-    //     try {
-    //         const cards = await getBankCardsStorage();
-    //         const card = cards.find((card: BankCard) => card.id === editCashback);
-
-    //         if (!card) {
-    //             router.replace('/cashback');
-    //             return;
-    //         }
-
-    //         setBankCard(card);
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
-    // const getBankCardsStorage = async () => {
-    //     try {
-    //         const cards = await AsyncStorage.getItem('bankCards');
-    //         return cards !== null ? JSON.parse(cards) : [];
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
-    // const getBankCardCashbackCategoriesStorage = async () => {
-    //     try {
-    //         const cashbackStorage = await AsyncStorage.getItem('cashback');
-
-    //         if (!cashbackStorage) {
-    //             return false;
-    //         }
-
-    //         const bankCards = JSON.parse(cashbackStorage);
-    //         const bankCard = bankCards.find((card: BankCard) => card.id === editCashback);
-
-    //         if (!bankCard) {
-    //             return false;
-    //         }
-
-    //         setBankCardCashbackCategories(bankCard.cashbackCategories);
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
-    // const handleSelectAddCashback = (code: string) => {
-    //     setSelectedCashbackCategoryCode(code);
-    //     setStepAddCashback(2);
-    // };
-
-    // const handleAddCashback = () => {
-    //     if (!bankCard) {
-    //         return;
-    //     }
-
-    //     const newCashbackCategory: CashbackItem = {
-    //         code: selectedCashbackCategoryCode,
-    //         percent: selectedCashbackCategoryPrecent,
-    //     };
-
-    //     const bankCardData: BankCardCashback = {
-    //         id: bankCard.id,
-    //         cashbackCategories: [],
-    //     };
-
-    //     const isAddedCashbackCategory = bankCardCashbackCategories.some(
-    //         (cashbackCategory) => cashbackCategory.code === newCashbackCategory.code,
-    //     );
-
-    //     if (isAddedCashbackCategory) {
-    //         const categories = bankCardCashbackCategories.map((cashbackCategory) => {
-    //             if (cashbackCategory.code === newCashbackCategory.code) {
-    //                 cashbackCategory.percent = selectedCashbackCategoryPrecent;
-    //             }
-
-    //             return cashbackCategory;
-    //         });
-
-    //         bankCardData.cashbackCategories = categories;
-    //     }
-
-    //     if (!isAddedCashbackCategory) {
-    //         bankCardData.cashbackCategories = [...bankCardCashbackCategories, newCashbackCategory];
-    //     }
-
-    //     addCashbackStorage(bankCardData).then(() => {
-    //         setBankCardCashbackCategories(bankCardData.cashbackCategories);
-    //         handleCancelAddCashback();
-    //     });
-    // };
-
-    // const addCashbackStorage = async (data: BankCardCashback) => {
-    //     try {
-    //         const cashbackStorage = await AsyncStorage.getItem('cashback');
-
-    //         if (cashbackStorage) {
-    //             const items = JSON.parse(cashbackStorage);
-    //             const cashbackIndex = items.findIndex((item: BankCard) => item.id === data.id);
-
-    //             if (cashbackIndex !== -1) {
-    //                 items[cashbackIndex].cashbackCategories = data.cashbackCategories;
-    //             }
-
-    //             const jsonValue = JSON.stringify(cashbackIndex !== -1 ? items : [...items, data]);
-    //             await AsyncStorage.setItem('cashback', jsonValue);
-    //         }
-
-    //         if (!cashbackStorage) {
-    //             const jsonValue = JSON.stringify([data]);
-    //             await AsyncStorage.setItem('cashback', jsonValue);
-    //         }
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
-    // const handleEditCashbackCategory = (item: CashbackItem) => {
-    //     openEditCashbackSheet();
-    //     setStepAddCashback(2);
-    //     setSelectedCashbackCategoryCode(item.code);
-    //     setSelectedCashbackCategoryPrecent(item.percent);
-    // };
-
-    // const handleDeleteCashbackCategory = async (code: string) => {
-    //     try {
-    //         const cashbackStorage = await AsyncStorage.getItem('cashback');
-
-    //         if (cashbackStorage) {
-    //             const bankCards = JSON.parse(cashbackStorage);
-    //             const indexBankCard = bankCards.findIndex((item: BankCard) => item.id === bankCard?.id);
-
-    //             if (indexBankCard !== -1) {
-    //                 bankCards[indexBankCard].cashbackCategories = bankCards[indexBankCard].cashbackCategories.filter(
-    //                     (item: CashbackItem) => item.code !== code,
-    //                 );
-    //             }
-
-    //             const jsonValue = JSON.stringify(bankCards);
-    //             await AsyncStorage.setItem('cashback', jsonValue);
-
-    //             getBankCardCashbackCategoriesStorage();
-    //         }
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
-    // const handleCancelAddCashback = () => {
-    //     closeEditCashbackSheet();
-    //     setStepAddCashback(1);
-    //     setSelectedCashbackCategoryPrecent(1);
-    // };
-
-    // const handlerClearBankCardCashback = async () => {
-    //     try {
-    //         setIsLoadingClearBankCardCashback(true);
-    //         const cashbackStorage = await AsyncStorage.getItem('cashback');
-
-    //         if (!cashbackStorage) {
-    //             return;
-    //         }
-
-    //         const bankCards = JSON.parse(cashbackStorage);
-    //         const items = bankCards.filter((item: BankCard) => item.id !== bankCard?.id);
-
-    //         const jsonValue = JSON.stringify(items);
-
-    //         await AsyncStorage.setItem('cashback', jsonValue).then(() => {
-    //             setBankCardCashbackCategories([]);
-    //         });
-    //     } finally {
-    //         setIsLoadingClearBankCardCashback(false);
-    //         closeDeleteAllCategoriesSheet();
-    //     }
-    // };
-
-    // const cashbackCategoryName = (code: string): string => {
-    //     return CashbackCategories.find((cashback) => cashback.code === code)?.name || '-';
-    // };
-
-    // const cashbackCategoryIcon = (code: string): any => {
-    //     return CashbackCategories.find((cashback) => cashback.code === code)?.icon;
-    // };
-
-    // // Delete all categories
-    // const openDeleteAllCategoriesSheet = () => {
-    //     deleteAllCategoriesSheetRef.current?.show();
-    // };
-
-    // const closeDeleteAllCategoriesSheet = () => {
-    //     deleteAllCategoriesSheetRef.current?.hide();
-    // };
-
-    // // Edit cashback
-    // const openEditCashbackSheet = () => {
-    //     editCashbackSheetRef.current?.show();
-    // };
-
-    // const closeEditCashbackSheet = () => {
-    //     editCashbackSheetRef.current?.hide();
-    // };
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         getBankCard();
-    //         getBankCardCashbackCategoriesStorage();
-    //     }, []),
-    // );
+        updateCashbackCategoriesBankCard(bankCardId.toString(), categoriesCashbackBankCard).then(() => {
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
+        });
+    };
 
     return (
         <VStack className="p-4 pt-1 flex-1">
@@ -368,7 +188,7 @@ export default function EditCashbackScreen() {
                         </Heading>
 
                         <ActionButtons
-                            confirm={handlerClearBankCardCashback}
+                            confirm={handleClearBankCardCashback}
                             cancel={closeDeleteAllCategoriesSheet}
                             confirmText="Очистить"
                         />
@@ -442,7 +262,7 @@ export default function EditCashbackScreen() {
 
                                     <ActionButtons
                                         confirm={handleAddCashback}
-                                        cancel={handleCancelAddCashback}
+                                        cancel={resetCashbackParams}
                                         confirmText="Готово"
                                     />
                                 </VStack>

@@ -6,7 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { Platform } from 'react-native';
+import { registerTranslation, ru } from 'react-native-paper-dates';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+registerTranslation('ru', ru);
 
 const queryClient = new QueryClient();
 
@@ -36,7 +39,7 @@ export default function RootLayout() {
     }, []);
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView className="flex-1">
             <StatusBar style="auto" />
             <GluestackUIProvider mode="dark">
                 <QueryClientProvider client={queryClient}>

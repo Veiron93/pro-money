@@ -1,4 +1,5 @@
 // Менеджер - содержит бизнес-логику
+import { CashbackCategoryData } from '@/types/cashback';
 import { BankCard, BankCardFormData } from '@customTypes/bankCard';
 import { bankCardRepository } from '@repositories/bankCardRepository';
 import uuid from 'react-native-uuid';
@@ -48,5 +49,11 @@ export const bankCardManager = {
             ...item,
             ...formData,
         };
+    },
+
+    async updateCashbackCategoriesBankCard(id: string, cashbackCategories: CashbackCategoryData[]): Promise<void> {
+        const items = await bankCardRepository.getAll();
+        const updatedItems = items.map((item) => (item.id === id ? { ...item, cashbackCategories } : item));
+        await bankCardRepository.save(updatedItems);
     },
 };

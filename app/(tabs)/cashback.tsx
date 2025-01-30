@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Percent } from 'lucide-react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { FlatList, Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
 
@@ -39,15 +39,8 @@ export default function CashbackScreen() {
         closeEditCashbackSheet();
     };
 
-    // useEffect(() => {
-    //     if (bankCards && cashback) {
-    //         initCashbackList();
-    //     }
-    // }, [bankCards, cashback]);
-
     useFocusEffect(
         useCallback(() => {
-            //queryClient.invalidateQueries({ queryKey: [CASHBACK_QUERY_KEYS.CASHBACK] });
             queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
         }, [queryClient]),
     );

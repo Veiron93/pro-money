@@ -1,5 +1,5 @@
-import type { BankCard, BankCardFormData, BankCardWithCashback } from '@customTypes/bankCard';
-import type { CashbackCategory } from '@customTypes/cashback';
+import type { BankCardFormData, BankCardWithCashback } from '@customTypes/bankCard';
+import type { CashbackCategory, CashbackCategoryData } from '@customTypes/cashback';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
 import { bankCardRepository } from '@repositories/bankCardRepository';
@@ -66,7 +66,10 @@ export const useBankCards = () => {
             .filter((bankCard) => bankCard.cashbackCategories?.length)
             .map((bankCard) => ({
                 bankCard,
-                cashbackCategories: bankCard.cashbackCategories?.map(({ code }) => cashbackCategoriesMap.get(code)),
+                cashbackCategories: bankCard.cashbackCategories?.map(({ code, percent }) => ({
+                    ...cashbackCategoriesMap.get(code),
+                    percent,
+                })),
             })) as BankCardWithCashback[];
     };
 
@@ -101,6 +104,10 @@ export const useBankCards = () => {
         return { bankCard: bankCardItem, cashbackCategories };
     };
 
+    const updateCashbackCategoriesBankCard = (id: string, cashbackCategories: CashbackCategoryData[]) => {
+        return bankCardManager.updateCashbackCategoriesBankCard(id, cashbackCategories);
+    };
+
     const addBankCard = (formData: BankCardFormData) =>
         handleAsyncOperation(mutations.addBankCard.mutateAsync(formData));
 
@@ -125,5 +132,7 @@ export const useBankCards = () => {
         getBankCard,
         getBankCardsWithCashback,
         getBankCardWithCashback,
+        getCashbackCategoriesMap,
+        updateCashbackCategoriesBankCard,
     };
 };

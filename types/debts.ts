@@ -1,4 +1,5 @@
 import { CURRENCY } from '@keys/currency';
+import { LEVELS } from '@keys/levels';
 
 export type DebtorType = 'i' | 'me';
 export type DebtType = 'money' | 'other';
@@ -10,9 +11,10 @@ export interface Debt {
     type: DebtType;
     currency: CURRENCY;
     amount: string;
-    date: string;
+    date: Date | undefined;
     description: string;
     isCompleted: boolean;
+    level: LEVELS;
 }
 
 export interface DebtFormData {
@@ -21,8 +23,9 @@ export interface DebtFormData {
     type: DebtType;
     currency: CURRENCY;
     amount: string;
-    date: string;
+    date: Date | undefined;
     description: string;
+    level: LEVELS;
 }
 
 export interface DebtsGrouped {

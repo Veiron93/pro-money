@@ -8,6 +8,7 @@ export const TAB_OPTIONS = {
     headerShown: false,
     tabBarActiveTintColor: COLORS.active,
     headerTintColor: COLORS.white,
+
     tabBarStyle: {
         backgroundColor: COLORS.background,
         borderTopWidth: 0,
