@@ -183,7 +183,7 @@ export const FormDebt = ({ initialData, btnSubmit, isPending }: FormDebtProps) =
                                 onChange={(d) => setFormData({ ...formData, date: d })}
                                 startYear={new Date().getFullYear()}
                                 validRange={{
-                                    startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+                                    startDate: new Date(),
                                 }}
                                 inputMode="start"
                                 label=" "

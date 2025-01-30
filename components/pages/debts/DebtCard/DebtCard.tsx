@@ -22,18 +22,23 @@ export const DebtCard = ({ data }: { data: Debt }) => {
         );
     };
 
-    // FIXME: разобраться с датой когда остался 1 день
     const RemainingTime = ({ date }: { date: Date }) => {
         const timeLeft = dayjs(date).fromNow(true);
         const daysLeft = dayjs(date).diff(dayjs(), 'days');
 
-        const сolor = daysLeft <= 3 ? '#f97316' : '#a3a3a3';
-        const text = timeLeft === 'день' ? 'остался' : 'осталось';
+        const colors = {
+            normal: '#a3a3a3',
+            attention: '#f97316',
+            overdue: '#ef4444',
+        };
+
+        const color = daysLeft < 0 ? colors.overdue : daysLeft < 3 ? colors.attention : colors.normal;
+        const text = daysLeft < 0 ? 'просрочен на' : timeLeft === 'день' ? 'остался' : 'осталось';
 
         return (
             <HStack space="xs" className="items-center">
-                <Hourglass size={16} color={сolor} />
-                <Text style={{ color: сolor }} size="md">
+                <Hourglass size={16} color={color} />
+                <Text style={{ color }} size="md">
                     {text} {timeLeft}
                 </Text>
             </HStack>

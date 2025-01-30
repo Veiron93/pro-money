@@ -32,7 +32,7 @@ export const ActiveDebtsList = ({ debts, className }: ActiveDebtsListProps) => {
 
         return (
             <HStack space="xs" className="items-center ml-auto mr-[8px] ">
-                {Icon && <Icon size={12} className="mr-1" color={color} />}
+                {Icon && <Icon size={12} color={color} />}
                 <Text style={{ color }} size="sm">
                     {level}
                 </Text>

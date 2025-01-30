@@ -1,4 +1,4 @@
-import { AlertOctagon, CircleDot, Zap } from 'lucide-react-native';
+import { Flag, Flame, Zap } from 'lucide-react-native';
 
 export enum LEVELS {
     LOW = 'Низкий',
@@ -7,13 +7,13 @@ export enum LEVELS {
 }
 
 export const LEVEL_ICONS = {
-    [LEVELS.LOW]: CircleDot,
-    [LEVELS.MEDIUM]: AlertOctagon,
-    [LEVELS.HIGH]: Zap,
+    [LEVELS.LOW]: Flag,
+    [LEVELS.MEDIUM]: Zap,
+    [LEVELS.HIGH]: Flame,
 } as const;
 
 export const LEVEL_COLORS = {
     [LEVELS.LOW]: '#71717a',
-    [LEVELS.MEDIUM]: '#06b6d4',
+    [LEVELS.MEDIUM]: '#eab308',
     [LEVELS.HIGH]: '#ef4444',
 } as const;
