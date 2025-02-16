@@ -14,6 +14,7 @@ import { Percent } from 'lucide-react-native';
 import { useCallback, useRef } from 'react';
 import { FlatList, Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CashbackScreen() {
     const queryClient = useQueryClient();
@@ -46,44 +47,46 @@ export default function CashbackScreen() {
     );
 
     return (
-        <Box className="pt-4 flex-1">
-            {isBankCardsLoading && <Spinner />}
+        <SafeAreaView className="flex-1">
+            <Box className="pt-4 flex-1">
+                {isBankCardsLoading && <Spinner />}
 
-            {!isBankCardsLoading && bankCards.length === 0 && <EmptyBankCardState />}
+                {!isBankCardsLoading && bankCards.length === 0 && <EmptyBankCardState />}
 
-            {!isBankCardsLoading && bankCards.length > 0 && (
-                <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackSheet} />
-            )}
+                {!isBankCardsLoading && bankCards.length > 0 && (
+                    <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackSheet} />
+                )}
 
-            {bankCardsWithCashback.length > 0 && (
-                <FlatList
-                    data={bankCardsWithCashback}
-                    ItemSeparatorComponent={() => <Box className="h-4" />}
-                    contentContainerStyle={{ padding: 0 }}
-                    keyExtractor={(item) => item.bankCard.id}
-                    renderItem={({ item }) => (
-                        <Pressable onPress={() => handleSelectCard(item.bankCard.id)}>
-                            <CashbackCard data={item} />
-                        </Pressable>
-                    )}
-                />
-            )}
-
-            <ActionSheet ref={editCashbackSheetRef}>
-                {bankCards && (
-                    <FlatListSheet
-                        style={{ height: 450 }}
+                {bankCardsWithCashback.length > 0 && (
+                    <FlatList
+                        data={bankCardsWithCashback}
                         ItemSeparatorComponent={() => <Box className="h-4" />}
-                        data={bankCards}
-                        keyExtractor={(item) => item.name}
+                        contentContainerStyle={{ padding: 0, paddingBottom: 90 }}
+                        keyExtractor={(item) => item.bankCard.id}
                         renderItem={({ item }) => (
-                            <Pressable onPress={() => handleSelectCard(item.id)}>
-                                <BankCardItem data={item} />
+                            <Pressable onPress={() => handleSelectCard(item.bankCard.id)}>
+                                <CashbackCard data={item} />
                             </Pressable>
                         )}
                     />
                 )}
-            </ActionSheet>
-        </Box>
+
+                <ActionSheet ref={editCashbackSheetRef}>
+                    {bankCards && (
+                        <FlatListSheet
+                            style={{ height: 450 }}
+                            ItemSeparatorComponent={() => <Box className="h-4" />}
+                            data={bankCards}
+                            keyExtractor={(item) => item.name}
+                            renderItem={({ item }) => (
+                                <Pressable onPress={() => handleSelectCard(item.id)}>
+                                    <BankCardItem data={item} />
+                                </Pressable>
+                            )}
+                        />
+                    )}
+                </ActionSheet>
+            </Box>
+        </SafeAreaView>
     );
 }

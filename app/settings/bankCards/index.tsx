@@ -13,7 +13,7 @@ import { useBankCards } from '@hooks/useBankCards';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, router, useFocusEffect } from 'expo-router';
-import { Plus, Trash } from 'lucide-react-native';
+import { Landmark, Plus, Trash } from 'lucide-react-native';
 import { useCallback, useRef, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
 
@@ -77,15 +77,25 @@ export default function BankCardsScreen() {
                                 className="w-full"
                                 onPress={() => router.navigate(`/settings/bankCards/${item.id}`)}
                             >
-                                <BankCardItem data={item} />
-                            </Pressable>
+                                <BankCardItem data={item}>
+                                    <HStack className="flex-row items-center" space="xl">
+                                        <Pressable
+                                            className="flex flex-row items-center gap-1"
+                                            onPress={() => handleDeleteCard(item)}
+                                        >
+                                            <Landmark color="#fff" size={18} />
+                                            <Text className="text-white">Открыть банк</Text>
+                                        </Pressable>
 
-                            <Pressable
-                                className="flex flex-row items-center gap-1 absolute right-2 bottom-2 p-2"
-                                onPress={() => handleDeleteCard(item)}
-                            >
-                                <Trash color="#fff" size={18} />
-                                <Text className="text-white">Удалить</Text>
+                                        <Pressable
+                                            className="flex flex-row items-center gap-1"
+                                            onPress={() => handleDeleteCard(item)}
+                                        >
+                                            <Trash color="#fff" size={18} />
+                                            <Text className="text-white">Удалить</Text>
+                                        </Pressable>
+                                    </HStack>
+                                </BankCardItem>
                             </Pressable>
                         </HStack>
                     )}

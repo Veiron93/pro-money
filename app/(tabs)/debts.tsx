@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { router, useFocusEffect } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Debts() {
     const queryClient = useQueryClient();
@@ -29,25 +30,27 @@ export default function Debts() {
     );
 
     return (
-        <Box className="flex-1 gap-5 pt-4 mb-[-12px]">
-            <HStack className="justify-between items-center gap-3">
-                <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
-                <ArchiveLink />
-            </HStack>
+        <SafeAreaView className="flex-1">
+            <Box className="flex-1 gap-5 pt-4 mb-[-12px]">
+                <HStack className="justify-between items-center gap-3">
+                    <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
+                    <ArchiveLink />
+                </HStack>
 
-            <TotalDebt debts={debtsGrouped} debtsTypeActive={activeDebtorType} />
+                <TotalDebt debts={debtsGrouped} debtsTypeActive={activeDebtorType} />
 
-            {Object.entries(debtsGrouped).map(([debtorType, debts]) => {
-                return (
-                    <ActiveDebtsList
-                        key={debtorType}
-                        debts={debts}
-                        className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'}`}
-                    />
-                );
-            })}
+                {Object.entries(debtsGrouped).map(([debtorType, debts]) => {
+                    return (
+                        <ActiveDebtsList
+                            key={debtorType}
+                            debts={debts}
+                            className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'}`}
+                        />
+                    );
+                })}
 
-            <Fab onPress={() => router.push('/debts/addDebt')} label="Добавить долг" icon={Plus} />
-        </Box>
+                <Fab onPress={() => router.push('/debts/addDebt')} label="Добавить долг" icon={Plus} />
+            </Box>
+        </SafeAreaView>
     );
 }

@@ -1,6 +1,6 @@
 import { TAB_OPTIONS } from '@configs/theme';
 import { Tabs } from 'expo-router';
-import { Coins, Heart, Home, Percent, Settings } from 'lucide-react-native';
+import { ArrowRightLeft, Coins, Home, Percent, Settings } from 'lucide-react-native';
 
 export default function TabLayout() {
     return (
@@ -17,7 +17,7 @@ export default function TabLayout() {
                 name="cashback"
                 options={{
                     title: 'Кешбек',
-                    tabBarIcon: ({ color }) => <Percent color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <Coins color={color} size={22} />,
                 }}
             />
 
@@ -25,22 +25,22 @@ export default function TabLayout() {
                 name="debts"
                 options={{
                     title: 'Долги',
-                    tabBarIcon: ({ color }) => <Coins color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <ArrowRightLeft color={color} size={22} />,
                 }}
             />
 
             <Tabs.Screen
-                name="help"
+                name="benefit"
                 options={{
-                    title: 'Поддержать',
-                    tabBarIcon: ({ color }) => <Heart color={color} size={22} />,
+                    title: 'Выгода',
+                    tabBarIcon: ({ color }) => <Percent color={color} size={22} />,
                 }}
             />
 
             <Tabs.Screen
                 name="settings"
                 options={{
-                    title: 'Settings',
+                    title: 'Настройки',
                     tabBarIcon: ({ color }) => <Settings color={color} size={22} />,
                 }}
             />

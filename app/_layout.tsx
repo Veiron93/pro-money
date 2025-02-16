@@ -1,13 +1,17 @@
 import '@/global.css';
 import { GluestackUIProvider } from '@components/ui/gluestack-ui-provider';
+import { COLORS } from '@configs/theme';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { registerTranslation, ru } from 'react-native-paper-dates';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
+SplashScreen.preventAutoHideAsync();
 
 registerTranslation('ru', ru);
 
@@ -39,13 +43,14 @@ export default function RootLayout() {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1">
-            <StatusBar style="auto" />
+        <GestureHandlerRootView>
+            <StatusBar style="auto" backgroundColor={COLORS.background} />
+
             <GluestackUIProvider mode="dark">
                 <QueryClientProvider client={queryClient}>
                     <Stack screenOptions={{ headerShown: false }} />
                 </QueryClientProvider>
             </GluestackUIProvider>
-        </SafeAreaView>
+        </GestureHandlerRootView>
     );
 }

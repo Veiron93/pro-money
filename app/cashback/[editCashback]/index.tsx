@@ -1,3 +1,4 @@
+import { CashbackPercent } from '@/components/pages/cashback/CashbackPercent/CashbackPercent';
 import { BankCardItem } from '@components/pages/bankCards/BankCardItem';
 import { ActionButtons } from '@components/shared/ActionButtons';
 import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
@@ -5,7 +6,6 @@ import { Fab } from '@components/shared/Fab';
 import { Box } from '@components/ui/box';
 import { Heading } from '@components/ui/heading';
 import { HStack } from '@components/ui/hstack';
-import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@components/ui/slider';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
 import { BANK_CARDS_QUERY_KEYS } from '@constants/queryKeys';
@@ -20,8 +20,6 @@ import { FlatList, Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
 
 type step = 1 | 2;
-
-const cashbackRates = [1, 3, 5, 7, 10];
 
 export default function EditCashbackScreen() {
     const queryClient = useQueryClient();
@@ -195,7 +193,7 @@ export default function EditCashbackScreen() {
                     </ActionSheet>
 
                     <ActionSheet ref={editCashbackSheetRef}>
-                        <VStack space="md" className="w-full mt-4">
+                        <VStack space="md" className="w-full">
                             <Heading className="text-center mb-3" size="2xl">
                                 {stepAddCashback === 1 ? 'Выберите категорию' : 'Процент кешбека'}
                             </Heading>
@@ -224,41 +222,10 @@ export default function EditCashbackScreen() {
 
                             {stepAddCashback === 2 && (
                                 <VStack space="md" className="w-full">
-                                    <HStack className="items-center justify-between" space="lg">
-                                        <Slider
-                                            defaultValue={selectedCashbackCategoryPercent}
-                                            value={selectedCashbackCategoryPercent}
-                                            size="sm"
-                                            minValue={1}
-                                            maxValue={100}
-                                            onChange={setSelectedCashbackCategoryPercent}
-                                            className="w-[85%]"
-                                        >
-                                            <SliderTrack>
-                                                <SliderFilledTrack />
-                                            </SliderTrack>
-
-                                            <SliderThumb />
-                                        </Slider>
-
-                                        <Text size="2xl" className="text-emerald-500 text-right">
-                                            {selectedCashbackCategoryPercent}%
-                                        </Text>
-                                    </HStack>
-
-                                    <HStack className="w-full mt-1 mb-6 justify-between">
-                                        {cashbackRates.map((item) => (
-                                            <Pressable
-                                                className="bg-neutral-800 rounded-2xl py-3 w-[18%] "
-                                                key={item}
-                                                onPress={() => setSelectedCashbackCategoryPercent(item)}
-                                            >
-                                                <Text size="xl" className="font-bold text-center">
-                                                    {item}%
-                                                </Text>
-                                            </Pressable>
-                                        ))}
-                                    </HStack>
+                                    <CashbackPercent
+                                        initialValue={selectedCashbackCategoryPercent}
+                                        onValueChange={setSelectedCashbackCategoryPercent}
+                                    />
 
                                     <ActionButtons
                                         confirm={handleAddCashback}
