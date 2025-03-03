@@ -1,28 +1,27 @@
 import { Donation } from '@components/pages/settings/Donation';
+import { Box } from '@components/ui/box';
 import { Text } from '@components/ui/text';
-import { Link, RelativePathString, router } from 'expo-router';
-import { CreditCard, Info } from 'lucide-react-native';
-import { ReactElement } from 'react';
+import { NavigationLink } from '@customTypes/settings';
+import { router } from 'expo-router';
+import { Coins, CreditCard, Info } from 'lucide-react-native';
 import { FlatList, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SvgProps } from 'react-native-svg';
 
 const iconsParams = {
     color: 'white',
-    size: 28,
+    size: 25,
 };
 
-interface Link {
-    title: string;
-    path: RelativePathString;
-    icon: ReactElement<SvgProps>;
-}
-
-const links: Link[] = [
+const links: NavigationLink[] = [
     {
         title: 'Банковские карты',
         path: '../settings/bankCards',
         icon: <CreditCard {...iconsParams} />,
+    },
+    {
+        title: 'Кешбек',
+        path: '../settings/cashback',
+        icon: <Coins {...iconsParams} />,
     },
     {
         title: 'О приложении',
@@ -37,20 +36,21 @@ export default function SettingsScreen() {
             <View className="flex-1 pt-4">
                 <Donation />
 
-                <FlatList
-                    data={links}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => router.push(item.path)}
-                            className="flex-row gap-3 rounded-full bg-neutral-800 mb-3 py-4 px-5"
-                        >
-                            {item.icon}
-                            <Text className="text-white" size="xl">
-                                {item.title}
-                            </Text>
-                        </Pressable>
-                    )}
-                />
+                <Box className="rounded-3xl overflow-hidden bg-neutral-700">
+                    <FlatList
+                        data={links}
+                        ItemSeparatorComponent={() => <View className="h-[2px] bg-neutral-900" />}
+                        renderItem={({ item }) => (
+                            <Pressable onPress={() => router.navigate(item.path)} className="flex-row gap-4 p-5">
+                                {item.icon}
+
+                                <Text className="text-white" size="xl">
+                                    {item.title}
+                                </Text>
+                            </Pressable>
+                        )}
+                    />
+                </Box>
             </View>
         </SafeAreaView>
     );

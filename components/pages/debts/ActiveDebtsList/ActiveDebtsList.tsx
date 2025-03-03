@@ -1,7 +1,7 @@
-import { HStack } from '@/components/ui/hstack';
 import { ActionsButtons } from '@components/pages/debts/ActiveDebtsList/ActionsButtons';
 import { DebtListItem } from '@components/pages/debts/DebtListItem';
 import { Box } from '@components/ui/box';
+import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { LEVELS, LEVEL_COLORS, LEVEL_ICONS } from '@constants/levels';
 import type { Debt } from '@customTypes/debts';
@@ -31,9 +31,14 @@ export const ActiveDebtsList = ({ debts, className }: ActiveDebtsListProps) => {
         const color = level ? LEVEL_COLORS[level] : '#a3a3a3';
 
         return (
-            <HStack space="xs" className="items-center ml-auto mr-[8px] ">
-                {Icon && <Icon size={12} color={color} />}
-                <Text style={{ color }} size="sm">
+            <HStack
+                space="xs"
+                style={{ borderColor: color }}
+                className="w-[96px] rounded-full py-1 px-2 ml-auto border items-center justify-center flex-none border-dashed"
+            >
+                {Icon && <Icon size={14} color={color} />}
+
+                <Text size="sm" style={{ color }}>
                     {level}
                 </Text>
             </HStack>

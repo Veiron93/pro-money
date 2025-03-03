@@ -13,6 +13,8 @@ export const Layout = () => {
                     backgroundColor: COLORS.background,
                 },
                 headerShadowVisible: false,
+                animation: 'fade',
+                animationTypeForReplace: 'push',
             }}
         />
     );

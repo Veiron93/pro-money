@@ -7,6 +7,7 @@ import { Stack } from 'expo-router';
 
 export default function AddCardScreen() {
     const showToast = useToastMessage();
+
     const { addBankCard, isPending } = useBankCards();
 
     const handleAddBankCard = async (formData: BankCardFormData) => {

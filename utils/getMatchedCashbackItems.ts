@@ -1,6 +1,7 @@
 import type { BankCard } from '@customTypes/bankCard';
 import type { CashbackItemData } from '@customTypes/cashback';
 
+// FIXME: Переписать типы
 /**
  * @description Получить совпадающие элементы кешбэка по банковским картам
  * @param cashbackItemsData - Данные элементов кешбэка

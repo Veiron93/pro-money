@@ -1,6 +1,8 @@
 import type { CashbackCategory, CashbackItemData } from '@customTypes/cashback';
 import { CashbackCategories } from '@storage/cashbackCategories';
 
+// FIXME: Переписать типы
+
 /**
  * @description Получить совпадающие категории кешбэка по элементу кешбэка
  * @param cashbackItem - Элемент кешбэка

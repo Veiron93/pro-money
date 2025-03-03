@@ -1,26 +1,35 @@
-import { BankCardWithCashback } from '@/types/bankCard';
 import { CashbackCategoryItem } from '@components/pages/cashback/CashbackCategoryItem';
 import { GradientContainer } from '@components/shared/GradientContainer';
-import { Heading } from '@components/ui/heading';
+import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
+import { BankCardWithCashback } from '@customTypes/bankCard';
 
-interface CashbackCardProps {
-    data: BankCardWithCashback;
-}
+export const CashbackCard = ({ bankCard, cashbackCategories }: BankCardWithCashback) => {
+    const { name, lastFourDigits, description } = bankCard;
 
-export const CashbackCard = ({ data }: CashbackCardProps) => {
+    const isLastFourDigits = Boolean(lastFourDigits);
+    const isDescription = Boolean(description);
+
     return (
         <GradientContainer>
-            <Heading className="text-white font-bold" size="3xl">
-                {data.bankCard.name}
-            </Heading>
+            <HStack className="justify-between items-center" space="md">
+                <Text className="text-white font-bold" size="2xl">
+                    {name}
+                </Text>
 
-            <Text>{data.bankCard.description}</Text>
+                {isLastFourDigits && <Text className="text-neutral-400">{lastFourDigits}</Text>}
+            </HStack>
 
-            <VStack className="mt-2" space="md">
-                {data.cashbackCategories?.map((category, index) => <CashbackCategoryItem key={index} {...category} />)}
-            </VStack>
+            {isDescription && <Text className="text-neutral-400">{description}</Text>}
+
+            {cashbackCategories.length > 0 && (
+                <VStack className="mt-3" space="md">
+                    {cashbackCategories.map((category, index) => (
+                        <CashbackCategoryItem key={index} {...category} />
+                    ))}
+                </VStack>
+            )}
         </GradientContainer>
     );
 };

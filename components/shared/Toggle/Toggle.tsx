@@ -11,7 +11,7 @@ interface ToggleProps {
 
 export function Toggle({ active, items, className, setActive }: ToggleProps) {
     return (
-        <HStack className={`h-[58px] p-[4px] bg-neutral-800 rounded-2xl flex-none ${className}`} space="sm">
+        <HStack className={`h-[58px] p-[4px] bg-neutral-700 rounded-[16px] flex-none ${className}`} space="sm">
             {items.map((item) => (
                 <ToggleButton
                     key={item.value}

@@ -63,11 +63,7 @@ export const FormBankCard = ({ initialData, btnSubmit, isPending }: FormBankCard
             const currentYear = new Date().getFullYear() % 100;
             const inputYear = parseInt(numbers.slice(2, 4));
 
-            if (inputYear < currentYear) {
-                setInvalidExpirationDate(true);
-            } else {
-                setInvalidExpirationDate(false);
-            }
+            setInvalidExpirationDate(inputYear < currentYear ? true : false);
         }
 
         // Форматируем в MM/YY

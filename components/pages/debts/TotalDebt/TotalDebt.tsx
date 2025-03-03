@@ -14,7 +14,7 @@ interface DebtListProps {
     debtsTypeActive: DebtorType;
 }
 
-const TOTAL_DEBT_ITEM_STYLES = 'px-[10px] py-[2px] bg-neutral-800 rounded-full';
+const TOTAL_DEBT_ITEM_STYLES = 'px-[10px] py-[3px] bg-neutral-700 rounded-full';
 
 const CURRENCIES = {
     '₽': 'rub',
@@ -57,17 +57,16 @@ export const TotalDebt = ({ debts, debtsTypeActive }: DebtListProps) => {
 
     const renderTotalDebt = (total: TotalDebt) => (
         <HStack className="items-center" space="sm">
-            <Text>Итого:</Text>
-            {total.rub > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.rub} ₽</Text>}
-            {total.eur > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.eur} €</Text>}
-            {total.usd > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.usd} $</Text>}
+            {total.rub > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.rub.toLocaleString('ru-RU')} ₽</Text>}
+            {total.eur > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.eur.toLocaleString('ru-RU')} €</Text>}
+            {total.usd > 0 && <Text className={TOTAL_DEBT_ITEM_STYLES}>{total.usd.toLocaleString('ru-RU')} $</Text>}
         </HStack>
     );
 
     if (!isTotalDebtI && !isTotalDebtMe) return null;
 
     return (
-        <HStack className="w-full h-[32px]" space="md">
+        <HStack className="w-full " space="md">
             {debtsTypeActive === 'i' && isTotalDebtI && renderTotalDebt(totalDebtI)}
             {debtsTypeActive === 'me' && isTotalDebtMe && renderTotalDebt(totalDebtMe)}
         </HStack>

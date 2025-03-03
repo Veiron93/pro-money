@@ -1,7 +1,8 @@
 import type { BankCardFormData, BankCardWithCashback } from '@customTypes/bankCard';
-import type { CashbackCategory, CashbackCategoryData } from '@customTypes/cashback';
+import type { CashbackCategoryData, CashbackCategoryWithPercent } from '@customTypes/cashback';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
+import { customCategoriesCashbackManager } from '@managers/customCategoriesCashbackManager';
 import { bankCardRepository } from '@repositories/bankCardRepository';
 import { CashbackCategories } from '@storage/cashbackCategories';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +11,7 @@ import { handleAsyncOperation } from '@utils/handleAsyncOperation';
 export const useBankCards = () => {
     const queryClient = useQueryClient();
 
+    // Mutations
     const mutations = {
         deleteBankCard: useMutation({
             mutationFn: bankCardManager.deleteBankCard,
@@ -31,77 +33,112 @@ export const useBankCards = () => {
         }),
     };
 
+    // Pending
     const isPending = {
         delete: mutations.deleteBankCard.isPending,
         add: mutations.addBankCard.isPending,
         update: mutations.updateBankCard.isPending,
     };
 
+    // Queries
     const bankCardsQuery = useQuery({
         queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS],
         queryFn: () => bankCardRepository.getAll(),
     });
 
-    const getBankCard = (id: string) =>
+    const bankCardQuery = (id: string) =>
         useQuery({
             queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD, id],
             queryFn: () => bankCardRepository.getById(id),
             enabled: !!id,
         });
 
-    const getCashbackCategoriesMap = () => {
-        return new Map(CashbackCategories.map((category) => [category.code, category]));
+    const bankCardsWithCashbackQuery = useQuery({
+        queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS_WITH_CASHBACK],
+        queryFn: () => getBankCardsWithCashback(),
+        enabled: !!bankCardsQuery.data?.length,
+    });
+
+    const bankCardWithCashbackQuery = (id: string) =>
+        useQuery({
+            queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD_WITH_CASHBACK, id],
+            queryFn: () => getBankCardWithCashback(id),
+            enabled: !!id,
+        });
+
+    const getSystemCashbackCategories = () => {
+        return CashbackCategories;
     };
 
-    const getBankCardsWithCashback = (): BankCardWithCashback[] => {
+    const getCustomCashbackCategories = async () => {
+        return await customCategoriesCashbackManager.getCustomCategoriesCashback();
+    };
+
+    /**
+     * Получает все системные и пользовательские категории кешбека
+     * @returns Массив категорий кешбека
+     */
+    const getCashbackCategoriesMap = async () => {
+        const systemCategories = getSystemCashbackCategories();
+        const customCategories = await getCustomCashbackCategories();
+
+        return new Map([...systemCategories, ...customCategories].map((category) => [category.code, category]));
+    };
+
+    /**
+     * Получает все банковские карты с кешбеком
+     * @returns Массив банковских карт с кешбеком
+     */
+    const getBankCardsWithCashback = async (): Promise<BankCardWithCashback[]> => {
         const bankCards = bankCardsQuery.data;
 
         if (!bankCards?.length) {
             return [];
         }
 
-        const cashbackCategoriesMap = getCashbackCategoriesMap();
+        const categoriesMap = await getCashbackCategoriesMap();
 
         return bankCards
             .filter((bankCard) => bankCard.cashbackCategories?.length)
             .map((bankCard) => ({
                 bankCard,
-                cashbackCategories: bankCard.cashbackCategories?.map(({ code, percent }) => ({
-                    ...cashbackCategoriesMap.get(code),
-                    percent,
-                })),
+                cashbackCategories: bankCard.cashbackCategories?.map(({ code, percent }) => {
+                    const cashbackCategory = categoriesMap.get(code);
+
+                    return {
+                        ...cashbackCategory,
+                        percent,
+                    };
+                }),
             })) as BankCardWithCashback[];
     };
 
-    const getBankCardWithCashback = (id: string): BankCardWithCashback | undefined => {
-        const bankCardItem = getBankCard(id).data;
+    /**
+     * Получает банковскую карту с кешбеком
+     * @param id - Идентификатор банковской карты
+     * @returns Банковская карта с кешбеком
+     */
+    const getBankCardWithCashback = async (id: string): Promise<BankCardWithCashback | undefined> => {
+        const bankCard = await bankCardRepository.getById(id);
 
-        if (!bankCardItem) return;
+        if (!bankCard) return;
 
-        const cashbackCategoriesMap = getCashbackCategoriesMap();
-
-        if (!bankCardItem.cashbackCategories?.length) {
-            return { bankCard: bankCardItem, cashbackCategories: [] };
+        if (!bankCard.cashbackCategories?.length) {
+            return { bankCard, cashbackCategories: [] };
         }
 
-        const cashbackCategories = bankCardItem.cashbackCategories.reduce<CashbackCategory[]>(
-            (acc, { code, percent }) => {
-                const categoryData = cashbackCategoriesMap.get(code);
+        const categoriesMap = await getCashbackCategoriesMap();
 
-                if (categoryData) {
-                    acc.push({
-                        code,
-                        percent,
-                        name: categoryData.name,
-                        icon: categoryData.icon,
-                    });
-                }
-                return acc;
-            },
-            [],
-        );
+        const cashbackCategories = bankCard.cashbackCategories.map(({ code, percent }) => {
+            const cashbackCategory = categoriesMap.get(code);
 
-        return { bankCard: bankCardItem, cashbackCategories };
+            return {
+                ...cashbackCategory,
+                percent,
+            };
+        }) as CashbackCategoryWithPercent[];
+
+        return { bankCard, cashbackCategories };
     };
 
     const updateCashbackCategoriesBankCard = (id: string, cashbackCategories: CashbackCategoryData[]) => {
@@ -125,14 +162,15 @@ export const useBankCards = () => {
 
     return {
         isPending,
+        bankCardQuery,
         bankCardsQuery,
+        bankCardsWithCashbackQuery,
+        bankCardWithCashbackQuery,
+        getBankCardWithCashback,
+
         deleteBankCard,
         addBankCard,
         editBankCard,
-        getBankCard,
-        getBankCardsWithCashback,
-        getBankCardWithCashback,
-        getCashbackCategoriesMap,
         updateCashbackCategoriesBankCard,
     };
 };

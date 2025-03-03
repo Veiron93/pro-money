@@ -19,7 +19,7 @@ export const DebtCard = ({ data }: { data: Debt }) => {
         const formattedText = value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : '0';
 
         return (
-            <Text className="text-green-600" size="2xl">
+            <Text className="text-neutral-400" size="2xl">
                 {formattedText} {currency}
             </Text>
         );
@@ -27,7 +27,7 @@ export const DebtCard = ({ data }: { data: Debt }) => {
 
     const OtherAmount = ({ value }: { value: string }) => {
         return (
-            <Text className="text-green-600" size="sm">
+            <Text className="text-neutral-400" size="md">
                 {value}
             </Text>
         );
@@ -57,24 +57,24 @@ export const DebtCard = ({ data }: { data: Debt }) => {
     };
 
     return (
-        <GradientContainer>
-            <VStack space="sm">
-                <HStack space="md" className="items-center justify-between">
-                    <Text size="2xl">{debtorName}</Text>
-                    <HStack className="flex-none" space="xs">
-                        {type === 'money' && <MoneyAmount value={moneyAmount} currency={currency} />}
-                        {type === 'other' && <OtherAmount value={otherAmount} />}
-                    </HStack>
+        <VStack space="sm" className="rounded-3xl">
+            <HStack space="md" className="items-center justify-between">
+                <Text size="2xl" className="text-white">
+                    {debtorName}
+                </Text>
+                <HStack className="flex-none" space="xs">
+                    {type === 'money' && <MoneyAmount value={moneyAmount} currency={currency} />}
+                    {type === 'other' && <OtherAmount value={otherAmount} />}
                 </HStack>
+            </HStack>
 
-                {date && !isCompleted && <RemainingTime date={date} />}
+            {description && (
+                <Text className="text-neutral-400" size="md">
+                    {description}
+                </Text>
+            )}
 
-                {description && (
-                    <Text className="text-neutral-400" size="md">
-                        {description}
-                    </Text>
-                )}
-            </VStack>
-        </GradientContainer>
+            {date && !isCompleted && <RemainingTime date={date} />}
+        </VStack>
     );
 };

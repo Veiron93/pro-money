@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { MD3DarkTheme } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 import { registerTranslation, ru } from 'react-native-paper-dates';
 
 SplashScreen.preventAutoHideAsync();
@@ -42,15 +44,34 @@ export default function RootLayout() {
         };
     }, []);
 
+    useEffect(() => {
+        const hideSplash = async () => {
+            await SplashScreen.hideAsync();
+        };
+
+        hideSplash();
+    }, []);
+
     return (
         <GestureHandlerRootView>
-            <StatusBar style="auto" backgroundColor={COLORS.background} />
+            <StatusBar style="light" backgroundColor={COLORS.background} />
 
-            <GluestackUIProvider mode="dark">
-                <QueryClientProvider client={queryClient}>
-                    <Stack screenOptions={{ headerShown: false }} />
-                </QueryClientProvider>
-            </GluestackUIProvider>
+            <QueryClientProvider client={queryClient}>
+                <GluestackUIProvider mode="dark">
+                    <PaperProvider theme={MD3DarkTheme}>
+                        <Stack
+                            screenOptions={{
+                                headerShown: false,
+                                contentStyle: {
+                                    backgroundColor: COLORS.background,
+                                },
+                                animation: 'fade',
+                                animationTypeForReplace: 'push',
+                            }}
+                        />
+                    </PaperProvider>
+                </GluestackUIProvider>
+            </QueryClientProvider>
         </GestureHandlerRootView>
     );
 }

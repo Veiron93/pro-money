@@ -1,5 +1,6 @@
 import { CashbackPercent } from '@/components/pages/cashback/CashbackPercent/CashbackPercent';
 import { BankCardItem } from '@components/pages/bankCards/BankCardItem';
+import { EditCasbackCategories } from '@components/pages/cashback/EditCasbackCategories';
 import { ActionButtons } from '@components/shared/ActionButtons';
 import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
 import { Fab } from '@components/shared/Fab';
@@ -11,13 +12,12 @@ import { VStack } from '@components/ui/vstack';
 import { BANK_CARDS_QUERY_KEYS } from '@constants/queryKeys';
 import type { CashbackCategoryData } from '@customTypes/cashback';
 import { useBankCards } from '@hooks/useBankCards';
-import { CashbackCategories } from '@storage/cashbackCategories';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { AlignJustify, Trash } from 'lucide-react-native';
-import { useRef, useState } from 'react';
+import { AlignJustify, Image, Star, Trash } from 'lucide-react-native';
+import { ComponentType, useRef, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
-import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
+import { SvgProps } from 'react-native-svg';
 
 type step = 1 | 2;
 
@@ -25,11 +25,12 @@ export default function EditCashbackScreen() {
     const queryClient = useQueryClient();
 
     const { editCashback: bankCardId } = useLocalSearchParams();
-    const { getBankCardWithCashback, getBankCard, updateCashbackCategoriesBankCard } = useBankCards();
 
-    const { data: bankCard } = getBankCard(bankCardId.toString());
+    const { bankCardWithCashbackQuery, updateCashbackCategoriesBankCard } = useBankCards();
 
-    const bankCardWithCashback = getBankCardWithCashback(bankCardId.toString());
+    const { data, isLoading: isBankCardLoading } = bankCardWithCashbackQuery(bankCardId.toString());
+
+    const { bankCard, cashbackCategories } = data || {};
 
     const [stepAddCashback, setStepAddCashback] = useState<step>(1);
     const [selectedCashbackCategoryCode, setSelectedCashbackCategoryCode] = useState('');
@@ -54,10 +55,15 @@ export default function EditCashbackScreen() {
         deleteAllCategoriesSheetRef.current?.hide();
     };
 
+    const getCashbackCategoryIcon = (icon: ComponentType<SvgProps> | undefined) => {
+        const Icon = icon ?? Star;
+        return <Icon color="#fff" size={20} />;
+    };
+
     const handleSelectAddCashback = (code: string) => {
         setSelectedCashbackCategoryCode(code);
 
-        const existingCategory = bankCard?.cashbackCategories?.find((category) => category.code === code);
+        const existingCategory = cashbackCategories?.find((category) => category.code === code);
         const percent = existingCategory ? existingCategory.percent : 1;
 
         setSelectedCashbackCategoryPercent(percent);
@@ -77,7 +83,7 @@ export default function EditCashbackScreen() {
             percent: selectedCashbackCategoryPercent,
         };
 
-        const categoriesCashbackBankCard: CashbackCategoryData[] = bankCard?.cashbackCategories || [];
+        const categoriesCashbackBankCard: CashbackCategoryData[] = cashbackCategories || [];
 
         const indexIsAddedCashbackCategory = categoriesCashbackBankCard.findIndex(
             (cashbackCategory) => cashbackCategory.code === categoryCashbackData.code,
@@ -109,8 +115,7 @@ export default function EditCashbackScreen() {
     };
 
     const handleDeleteCashbackCategory = (code: string) => {
-        const categoriesCashbackBankCard =
-            bankCard?.cashbackCategories?.filter((category) => category.code !== code) || [];
+        const categoriesCashbackBankCard = cashbackCategories?.filter((category) => category.code !== code) || [];
 
         updateCashbackCategoriesBankCard(bankCardId.toString(), categoriesCashbackBankCard).then(() => {
             queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
@@ -121,42 +126,54 @@ export default function EditCashbackScreen() {
         <VStack className="p-4 pt-1 flex-1">
             <Stack.Screen options={{ title: 'Управление кешбеком' }} />
 
-            {bankCardWithCashback && (
+            {bankCard && (
                 <>
-                    <Pressable onPress={() => router.push(`/settings/bankCards/${bankCardWithCashback.bankCard.id}`)}>
-                        <BankCardItem data={bankCardWithCashback.bankCard} />
+                    <Pressable onPress={() => router.push(`/settings/bankCards/${bankCard.id}`)}>
+                        <BankCardItem data={bankCard} />
                     </Pressable>
 
                     <Fab onPress={openEditCashbackSheet} label="Категории" icon={AlignJustify} />
 
-                    {bankCardWithCashback.cashbackCategories.length === 0 && (
+                    {cashbackCategories?.length === 0 && (
                         <Text className="text-neutral-400 text-center mt-6" size="2xl">
                             Выберите категории кешбека {'\n'} на этот месяц
                         </Text>
                     )}
 
-                    {bankCardWithCashback.cashbackCategories.length > 0 && (
+                    {cashbackCategories && cashbackCategories?.length > 0 && (
                         <Box className="mt-6">
-                            <Pressable className="mb-6" onPress={openDeleteAllCategoriesSheet}>
-                                <HStack
-                                    className="justify-center items-center bg-neutral-800 rounded-full p-4"
-                                    space="sm"
+                            <HStack className="items-center justify-between mb-6" space="md">
+                                <Pressable
+                                    className="flex-row flex-1 gap-[5px] justify-center items-center bg-neutral-700 rounded-full px-4 py-3"
+                                    onPress={openDeleteAllCategoriesSheet}
                                 >
-                                    <Trash color="#a3a3a3" />
-                                    <Text className="text-neutral-400" size="xl">
-                                        Очистить список
+                                    <Trash size={20} color="#d4d4d4" />
+                                    <Text className="text-neutral-300" size="lg">
+                                        Очистить
                                     </Text>
-                                </HStack>
-                            </Pressable>
+                                </Pressable>
+
+                                <Pressable
+                                    className="flex-row flex-1 gap-[5px] justify-center items-center bg-neutral-700 rounded-full px-4 py-3"
+                                    onPress={openDeleteAllCategoriesSheet}
+                                >
+                                    <Image size={20} color="#d4d4d4" />
+                                    <Text className="text-neutral-300" size="lg">
+                                        Загрузить
+                                    </Text>
+                                </Pressable>
+                            </HStack>
 
                             <FlatList
-                                data={bankCardWithCashback.cashbackCategories}
+                                data={cashbackCategories}
                                 keyExtractor={(item) => item.code}
                                 renderItem={({ item }) => (
                                     <HStack space="md" className="items-center">
                                         <Pressable className="w-[85%]" onPress={() => handleEditCashbackCategory(item)}>
                                             <HStack className="items-center">
-                                                <Box className="rounded-full bg-green-800 p-2">{item.icon}</Box>
+                                                <Box className="rounded-full bg-orange-800 p-2">
+                                                    {getCashbackCategoryIcon(item.icon)}
+                                                </Box>
                                                 <Text className="ml-3" size="2xl">
                                                     {item.name}
                                                 </Text>
@@ -199,25 +216,7 @@ export default function EditCashbackScreen() {
                             </Heading>
 
                             {stepAddCashback === 1 && (
-                                <FlatListSheet
-                                    ItemSeparatorComponent={() => <Box className="h-3" />}
-                                    className="min-h-[30vh] max-h-[50vh]"
-                                    data={CashbackCategories}
-                                    keyExtractor={(item) => item.code}
-                                    renderItem={({ item }) => (
-                                        <Pressable
-                                            className="flex-row items-center rounded-2xl bg-neutral-800 p-4"
-                                            onPress={() => handleSelectAddCashback(item.code)}
-                                            key={item.code}
-                                        >
-                                            {item.icon}
-
-                                            <Text className="ml-3" size="xl">
-                                                {item.name}
-                                            </Text>
-                                        </Pressable>
-                                    )}
-                                />
+                                <EditCasbackCategories handleSelectAddCashback={handleSelectAddCashback} />
                             )}
 
                             {stepAddCashback === 2 && (

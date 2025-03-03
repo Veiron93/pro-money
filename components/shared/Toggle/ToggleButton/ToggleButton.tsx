@@ -1,15 +1,12 @@
-import { ButtonText } from '@components/ui/button';
-import { Button } from '@components/ui/button';
+import { Pressable, Text } from 'react-native';
 
 export function ToggleButton({ title, active, onPress }: { title: string; active: boolean; onPress: () => void }) {
     return (
-        <Button
-            className={`h-[50px] flex-1 rounded-xl ${active ? 'bg-neutral-700' : 'bg-transparent'}`}
+        <Pressable
+            className={`h-[50px] flex-1  justify-center items-center rounded-[14px] ${active ? 'bg-neutral-800' : 'bg-transparent'}`}
             onPress={onPress}
         >
-            <ButtonText className="text-white" size="md">
-                {title}
-            </ButtonText>
-        </Button>
+            <Text className="text-white text-lg">{title}</Text>
+        </Pressable>
     );
 }

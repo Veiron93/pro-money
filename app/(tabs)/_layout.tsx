@@ -3,13 +3,27 @@ import { Tabs } from 'expo-router';
 import { ArrowRightLeft, Coins, Home, Percent, Settings } from 'lucide-react-native';
 
 export default function TabLayout() {
+    const iconSize = 27;
+
     return (
-        <Tabs initialRouteName="index" screenOptions={TAB_OPTIONS}>
+        <Tabs
+            initialRouteName="index"
+            screenOptions={{
+                ...TAB_OPTIONS,
+                animation: 'shift',
+                transitionSpec: {
+                    animation: 'timing',
+                    config: {
+                        duration: 170,
+                    },
+                },
+            }}
+        >
             <Tabs.Screen
                 name="index"
                 options={{
                     title: 'Главная',
-                    tabBarIcon: ({ color }) => <Home color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <Home color={color} size={iconSize} />,
                 }}
             />
 
@@ -17,7 +31,7 @@ export default function TabLayout() {
                 name="cashback"
                 options={{
                     title: 'Кешбек',
-                    tabBarIcon: ({ color }) => <Coins color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <Coins color={color} size={iconSize} />,
                 }}
             />
 
@@ -25,7 +39,7 @@ export default function TabLayout() {
                 name="debts"
                 options={{
                     title: 'Долги',
-                    tabBarIcon: ({ color }) => <ArrowRightLeft color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <ArrowRightLeft color={color} size={iconSize} />,
                 }}
             />
 
@@ -33,7 +47,7 @@ export default function TabLayout() {
                 name="benefit"
                 options={{
                     title: 'Выгода',
-                    tabBarIcon: ({ color }) => <Percent color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <Percent color={color} size={iconSize} />,
                 }}
             />
 
@@ -41,7 +55,7 @@ export default function TabLayout() {
                 name="settings"
                 options={{
                     title: 'Настройки',
-                    tabBarIcon: ({ color }) => <Settings color={color} size={22} />,
+                    tabBarIcon: ({ color }) => <Settings color={color} size={iconSize} />,
                 }}
             />
         </Tabs>

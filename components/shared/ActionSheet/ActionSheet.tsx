@@ -9,6 +9,7 @@ interface ActionSheetProps {
     styleContainer?: StyleProp<ViewStyle>;
 }
 
+// FIXME: починить задуржку при открытии
 export const ActionSheet = forwardRef<ActionSheetRef, ActionSheetProps>(
     ({ children, styleContainer, ...props }, ref) => {
         const customStyleContainer = StyleSheet.flatten([styles.container, styleContainer]);

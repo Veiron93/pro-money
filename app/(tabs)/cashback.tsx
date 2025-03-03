@@ -19,13 +19,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function CashbackScreen() {
     const queryClient = useQueryClient();
 
-    const { bankCardsQuery, getBankCardsWithCashback } = useBankCards();
+    const { bankCardsQuery, bankCardsWithCashbackQuery } = useBankCards();
 
     const editCashbackSheetRef = useRef<ActionSheetRef>(null);
 
     const { data: bankCards = [], isLoading: isBankCardsLoading } = bankCardsQuery;
-
-    const bankCardsWithCashback = getBankCardsWithCashback();
+    const { data: bankCardsWithCashback = [], isLoading: isBankCardsWithCashbackLoading } = bankCardsWithCashbackQuery;
 
     const openEditCashbackSheet = () => {
         editCashbackSheetRef.current?.show();
@@ -42,7 +41,7 @@ export default function CashbackScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS] });
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARDS_WITH_CASHBACK] });
         }, [queryClient]),
     );
 
@@ -57,7 +56,7 @@ export default function CashbackScreen() {
                     <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackSheet} />
                 )}
 
-                {bankCardsWithCashback.length > 0 && (
+                {!isBankCardsWithCashbackLoading && bankCardsWithCashback.length > 0 && (
                     <FlatList
                         data={bankCardsWithCashback}
                         ItemSeparatorComponent={() => <Box className="h-4" />}
@@ -65,7 +64,7 @@ export default function CashbackScreen() {
                         keyExtractor={(item) => item.bankCard.id}
                         renderItem={({ item }) => (
                             <Pressable onPress={() => handleSelectCard(item.bankCard.id)}>
-                                <CashbackCard data={item} />
+                                <CashbackCard {...item} />
                             </Pressable>
                         )}
                     />

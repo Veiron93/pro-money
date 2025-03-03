@@ -13,7 +13,7 @@ export const LEVEL_ICONS = {
 } as const;
 
 export const LEVEL_COLORS = {
-    [LEVELS.LOW]: '#71717a',
+    [LEVELS.LOW]: '#a3a3a3',
     [LEVELS.MEDIUM]: '#eab308',
-    [LEVELS.HIGH]: '#ef4444',
+    [LEVELS.HIGH]: '#dc2626',
 } as const;

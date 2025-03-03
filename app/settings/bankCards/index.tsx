@@ -78,7 +78,7 @@ export default function BankCardsScreen() {
                                 onPress={() => router.navigate(`/settings/bankCards/${item.id}`)}
                             >
                                 <BankCardItem data={item}>
-                                    <HStack className="flex-row items-center" space="xl">
+                                    <HStack className="flex-row items-center" space="2xl">
                                         <Pressable
                                             className="flex flex-row items-center gap-1"
                                             onPress={() => handleDeleteCard(item)}

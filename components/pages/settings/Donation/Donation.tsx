@@ -21,14 +21,14 @@ export const Donation = () => {
         }
     };
     return (
-        <Box className="rounded-3xl overflow-hidden mb-5">
+        <Box className="rounded-3xl overflow-hidden mb-7">
             <LinearGradient colors={['#262626', '#404040']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-                <Text className="text-white p-4" size="lg">
+                <Text className="text-white p-4" size="xl">
                     Если Вам нравится приложение, Вы можете поддержать его развитие.
                 </Text>
             </LinearGradient>
 
-            <Pressable onPress={onCopy} className="flex-row justify-between bg-red-800 p-4">
+            <Pressable onPress={onCopy} className="flex-row justify-between bg-orange-800 p-4">
                 <Text className="text-white" size="xl">
                     {NUMBER_CARD_DONATE}
                 </Text>

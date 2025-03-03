@@ -1,3 +1,4 @@
+import { CashbackCategoryStorage } from '@customTypes/cashback';
 import {
     Baby,
     Book,
@@ -24,149 +25,136 @@ import {
     Utensils,
     Video,
 } from 'lucide-react-native';
-import { ReactElement } from 'react';
-import { SvgProps } from 'react-native-svg';
 
-const iconParams = {
-    color: 'white',
-    size: 20,
-};
-
-export interface CashbackCategory {
-    code: string;
-    name: string;
-    icon: ReactElement<SvgProps>;
-}
-
-export const CashbackCategories: CashbackCategory[] = [
+export const CashbackCategories: CashbackCategoryStorage[] = [
     {
         name: 'Авиабилеты',
         code: 'avia',
-        icon: <Plane {...iconParams} />,
+        icon: Plane,
     },
     {
         name: 'Автоуслуги',
         code: 'auto_service',
-        icon: <Car {...iconParams} />,
+        icon: Car,
     },
     {
         name: 'Аренда авто',
         code: 'car_rental',
-        icon: <Car {...iconParams} />,
+        icon: Car,
     },
     {
         name: 'Аптеки',
         code: 'pharmacy',
-        icon: <Pill {...iconParams} />,
+        icon: Pill,
     },
     {
         name: 'Детские товары',
         code: 'kids',
-        icon: <Baby {...iconParams} />,
+        icon: Baby,
     },
     {
         name: 'Дом и ремонт',
         code: 'home',
-        icon: <Home {...iconParams} />,
+        icon: Home,
     },
     {
         name: 'Ж/д билеты',
         code: 'railway',
-        icon: <Train {...iconParams} />,
+        icon: Train,
     },
     {
         name: 'Животные',
         code: 'pets',
-        icon: <Dog {...iconParams} />,
+        icon: Dog,
     },
     {
         name: 'Искусство',
         code: 'art',
-        icon: <Palette {...iconParams} />,
+        icon: Palette,
     },
     {
         name: 'Канцтовары',
         code: 'stationery',
-        icon: <PenTool {...iconParams} />,
+        icon: PenTool,
     },
     {
         name: 'Каршеринг',
         code: 'carsharing',
-        icon: <Car {...iconParams} />,
+        icon: Car,
     },
     {
         name: 'Кино',
         code: 'cinema',
-        icon: <Film {...iconParams} />,
+        icon: Film,
     },
     {
         name: 'Книги',
         code: 'books',
-        icon: <Book {...iconParams} />,
+        icon: Book,
     },
     {
         name: 'Красота',
         code: 'beauty',
-        icon: <Scissors {...iconParams} />,
+        icon: Scissors,
     },
     {
         name: 'Музыка',
         code: 'music',
-        icon: <Music {...iconParams} />,
+        icon: Music,
     },
     {
         name: 'Образование',
         code: 'education',
-        icon: <GraduationCap {...iconParams} />,
+        icon: GraduationCap,
     },
     {
         name: 'Одежда и обувь',
         code: 'clothes',
-        icon: <Shirt {...iconParams} />,
+        icon: Shirt,
     },
     {
         name: 'Развлечения',
         code: 'entertainment',
-        icon: <GamepadIcon {...iconParams} />,
+        icon: GamepadIcon,
     },
     {
         name: 'Рестораны',
         code: 'restaurants',
-        icon: <Utensils {...iconParams} />,
+        icon: Utensils,
     },
     {
         name: 'Супермаркеты',
         code: 'supermarkets',
-        icon: <ShoppingCart {...iconParams} />,
+        icon: ShoppingCart,
     },
     {
         name: 'Такси',
         code: 'taxi',
-        icon: <CarTaxiFront {...iconParams} />,
+        icon: CarTaxiFront,
     },
     {
         name: 'Топливо',
         code: 'fuel',
-        icon: <Fuel {...iconParams} />,
+        icon: Fuel,
     },
     {
         name: 'Фастфуд',
         code: 'fastfood',
-        icon: <Pizza {...iconParams} />,
+        icon: Pizza,
     },
     {
         name: 'Duty Free',
         code: 'duty_free',
-        icon: <ShoppingBasket {...iconParams} />,
+        icon: ShoppingBasket,
     },
     {
         name: 'Онлайн-кинотеатры',
         code: 'online_cinema',
-        icon: <Video {...iconParams} />,
+        icon: Video,
     },
     {
         name: 'Маркетплейсы',
         code: 'marketplaces',
-        icon: <Store {...iconParams} />,
+        icon: Store,
     },
 ];

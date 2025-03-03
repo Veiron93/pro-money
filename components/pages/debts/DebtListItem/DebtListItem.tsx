@@ -1,3 +1,4 @@
+import { GradientContainer } from '@/components/shared/GradientContainer';
 import { HStack } from '@components/ui/hstack';
 import { VStack } from '@components/ui/vstack';
 import { Debt } from '@customTypes/debts';
@@ -18,14 +19,14 @@ export const DebtListItem = ({ children, data }: DebtListItemProps) => {
     };
 
     return (
-        <VStack className="w-full bg-neutral-800 rounded-3xl">
-            <Pressable onPress={() => handleSelectDebt(data.id)} className="w-full flex-1">
+        <GradientContainer className="p-[0]">
+            <Pressable onPress={() => handleSelectDebt(data.id)} className="w-full flex-1 p-[14px]">
                 <DebtCard data={data} />
             </Pressable>
 
-            <HStack className="p-2 items-center" space="md">
+            <HStack className="items-center bg-neutral-800 rounded-3xl p-3" space="md">
                 {children}
             </HStack>
-        </VStack>
+        </GradientContainer>
     );
 };

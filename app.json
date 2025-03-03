@@ -2,50 +2,49 @@
     "expo": {
         "name": "Про.Деньги",
         "slug": "pro-money",
-        "version": "1.0.0",
+        "version": "0.1.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "language": "ru",
+        "backgroundColor": "#171717",
+
         "splash": {
-            "image": "./assets/images/splash.png",
+            "image": "./assets/images/splash-icon.png",
             "resizeMode": "contain",
             "backgroundColor": "#171717"
         },
+
         "ios": {
             "supportsTablet": true
         },
-        "backgroundColor": "#171717",
+
+        "androidStatusBar": {
+            "backgroundColor": "#171717",
+            "barStyle": "light-content",
+            "translucent": false,
+            "hidden": false
+        },
 
         "androidNavigationBar": {
             "backgroundColor": "#171717"
         },
+
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
-                "backgroundColor": "#171717"
+                "foregroundImage": "./assets/images/adaptive-icon.png"
             },
             "package": "com.veiron93.promoney"
         },
+
         "web": {
             "bundler": "metro",
             "output": "static",
             "favicon": "./assets/images/favicon.png"
         },
 
-        "plugins": [
-            "expo-router",
-            [
-                "expo-splash-screen",
-                {
-                    "image": "./assets/images/splash.png",
-                    "resizeMode": "contain",
-                    "backgroundColor": "#171717"
-                }
-            ]
-        ],
         "experiments": {
             "typedRoutes": true
         },
@@ -56,6 +55,16 @@
             "eas": {
                 "projectId": "74508e38-c869-4e25-8452-ea29a3ee67f9"
             }
-        }
+        },
+        "plugins": [
+            [
+                "expo-splash-screen",
+                {
+                    "image": "./assets/images/splash-icon.png",
+                    "backgroundColor": "#171717",
+                    "resizeMode": "contain"
+                }
+            ]
+        ]
     }
 }

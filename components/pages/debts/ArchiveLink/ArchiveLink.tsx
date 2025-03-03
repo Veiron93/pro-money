@@ -5,8 +5,8 @@ import { Pressable } from 'react-native';
 export const ArchiveLink = () => (
     <Pressable
         onPress={() => router.push('/debts/archive')}
-        className="bg-neutral-800 w-[58px] h-[58px] rounded-full flex flex-none items-center justify-center"
+        className="bg-neutral-700 w-[46px] h-[46px] rounded-full flex flex-none items-center justify-center"
     >
-        <Archive size={22} color="#fff" />
+        <Archive size={18} color="#fff" />
     </Pressable>
 );
