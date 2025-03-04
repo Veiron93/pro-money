@@ -5,14 +5,14 @@ import Slider from '@react-native-community/slider';
 import { useState } from 'react';
 import { Platform, Pressable, Vibration } from 'react-native';
 
-interface CashbackSliderProps {
+interface CashbackPercentSliderProps {
     initialValue: number;
     onValueChange: (value: number) => void;
 }
 
 const cashbackRates = [1, 3, 5, 7, 10];
 
-export const CashbackPercent = ({ initialValue, onValueChange }: CashbackSliderProps) => {
+export const CashbackPercentSlider = ({ initialValue, onValueChange }: CashbackPercentSliderProps) => {
     const [sliderValue, setSliderValue] = useState(1);
 
     return (

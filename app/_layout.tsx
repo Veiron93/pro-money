@@ -6,11 +6,9 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
-import { Platform } from 'react-native';
+import { AppState, AppStateStatus, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { MD3DarkTheme } from 'react-native-paper';
-import { PaperProvider } from 'react-native-paper';
+import { MD3DarkTheme, PaperProvider } from 'react-native-paper';
 import { registerTranslation, ru } from 'react-native-paper-dates';
 
 SplashScreen.preventAutoHideAsync();

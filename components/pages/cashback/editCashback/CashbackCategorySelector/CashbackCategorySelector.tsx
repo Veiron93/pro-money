@@ -1,20 +1,19 @@
-import { useCashback } from '@/hooks/useCashback';
-import { CashbackCategoryStorage, CustomCategoryCashback } from '@/types/cashback';
 import { Toggle } from '@components/shared/Toggle';
 import { Box } from '@components/ui/box';
 import { Text } from '@components/ui/text';
+import { CashbackCategoryStorage, CustomCategoryCashback } from '@customTypes/cashback';
+import { useCashback } from '@hooks/useCashback';
 import { Star } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable } from 'react-native';
-import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
+import { FlatList, Pressable } from 'react-native';
 
-interface EditCasbackCategoriesProps {
+interface CashbackCategorySelectorProps {
     handleSelectAddCashback: (code: string) => void;
 }
 
 type TypeCategories = 'system' | 'custom';
 
-export const EditCasbackCategories = ({ handleSelectAddCashback }: EditCasbackCategoriesProps) => {
+export const CashbackCategorySelector = ({ handleSelectAddCashback }: CashbackCategorySelectorProps) => {
     const [typeCategories, setTypeCategories] = useState<TypeCategories>('system');
 
     const { categoriesGroupedQuery } = useCashback();
@@ -46,9 +45,10 @@ export const EditCasbackCategories = ({ handleSelectAddCashback }: EditCasbackCa
                 className="mb-3"
             />
 
-            <FlatListSheet
+            <FlatList
                 ItemSeparatorComponent={() => <Box className="h-3" />}
                 className="min-h-[30vh] max-h-[50vh]"
+                showsVerticalScrollIndicator={false}
                 data={categories}
                 keyExtractor={(item) => item.code}
                 renderItem={({ item }) => (

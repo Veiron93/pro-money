@@ -1,7 +1,7 @@
 import { BankCardItem } from '@components/pages/bankCards/BankCardItem';
 import { CashbackCard } from '@components/pages/cashback/CashbackCard';
 import { EmptyBankCardState } from '@components/pages/cashback/EmptyBankCardState';
-import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
+import { ActionSheet } from '@components/shared/ActionSheet';
 import { Fab } from '@components/shared/Fab';
 import { Spinner } from '@components/shared/Spinner';
 import { Box } from '@components/ui/box';
@@ -11,9 +11,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Percent } from 'lucide-react-native';
-import { useCallback, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
-import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CashbackScreen() {
@@ -21,22 +20,22 @@ export default function CashbackScreen() {
 
     const { bankCardsQuery, bankCardsWithCashbackQuery } = useBankCards();
 
-    const editCashbackSheetRef = useRef<ActionSheetRef>(null);
+    const [isModalVisibleEditCashback, setIsModalVisibleEditCashback] = useState(false);
 
     const { data: bankCards = [], isLoading: isBankCardsLoading } = bankCardsQuery;
     const { data: bankCardsWithCashback = [], isLoading: isBankCardsWithCashbackLoading } = bankCardsWithCashbackQuery;
 
-    const openEditCashbackSheet = () => {
-        editCashbackSheetRef.current?.show();
+    const openEditCashbackModal = () => {
+        setIsModalVisibleEditCashback(true);
     };
 
-    const closeEditCashbackSheet = () => {
-        editCashbackSheetRef.current?.hide();
+    const closeEditCashbackModal = () => {
+        setIsModalVisibleEditCashback(false);
     };
 
     const handleSelectCard = (id: string) => {
         router.push(`/cashback/${id}`);
-        closeEditCashbackSheet();
+        closeEditCashbackModal();
     };
 
     useFocusEffect(
@@ -47,13 +46,13 @@ export default function CashbackScreen() {
 
     return (
         <SafeAreaView className="flex-1">
-            <Box className="pt-4 flex-1">
+            <Box className="flex-1 gap-5 pt-4 mb-[-12px]">
                 {isBankCardsLoading && <Spinner />}
 
                 {!isBankCardsLoading && bankCards.length === 0 && <EmptyBankCardState />}
 
                 {!isBankCardsLoading && bankCards.length > 0 && (
-                    <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackSheet} />
+                    <Fab label="Изменить кешбек" icon={Percent} onPress={openEditCashbackModal} />
                 )}
 
                 {!isBankCardsWithCashbackLoading && bankCardsWithCashback.length > 0 && (
@@ -70,10 +69,15 @@ export default function CashbackScreen() {
                     />
                 )}
 
-                <ActionSheet ref={editCashbackSheetRef}>
-                    {bankCards && (
-                        <FlatListSheet
-                            style={{ height: 450 }}
+                <ActionSheet
+                    title="Выберите карту"
+                    visible={isModalVisibleEditCashback}
+                    onClose={closeEditCashbackModal}
+                >
+                    {bankCards.length > 0 && (
+                        <FlatList
+                            style={{ marginBottom: -20, paddingBottom: 20 }}
+                            showsVerticalScrollIndicator={false}
                             ItemSeparatorComponent={() => <Box className="h-4" />}
                             data={bankCards}
                             keyExtractor={(item) => item.name}

@@ -117,7 +117,9 @@ export const FormBankCard = ({ initialData, btnSubmit, isPending }: FormBankCard
     return (
         <VStack className="flex-1" space="2xl">
             <ScrollView showsVerticalScrollIndicator={false}>
-                <VStack space="2xl">
+                <BankCardSecurityDisclaimer />
+
+                <VStack space="2xl" className="mt-4">
                     <FormControl isRequired>
                         <FormControlLabel className="mb-2">
                             <FormControlLabelText size="xl">Название карты</FormControlLabelText>
@@ -198,8 +200,6 @@ export const FormBankCard = ({ initialData, btnSubmit, isPending }: FormBankCard
                     />
                 </VStack>
             </ScrollView>
-
-            <BankCardSecurityDisclaimer />
 
             <ActionButtons
                 confirm={handleSubmit}

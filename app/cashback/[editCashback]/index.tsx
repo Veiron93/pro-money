@@ -1,11 +1,13 @@
-import { CashbackPercent } from '@/components/pages/cashback/CashbackPercent/CashbackPercent';
 import { BankCardItem } from '@components/pages/bankCards/BankCardItem';
-import { EditCasbackCategories } from '@components/pages/cashback/EditCasbackCategories';
+import { CashbackCategoryItem } from '@components/pages/cashback/CashbackCategoryItem/CashbackCategoryItem';
+import { CashbackActionButtons } from '@components/pages/cashback/editCashback/CashbackActionButtons';
+import { CashbackCategorySelector } from '@components/pages/cashback/editCashback/CashbackCategorySelector';
+import { CashbackPercentSlider } from '@components/pages/cashback/editCashback/CashbackPercentSlider/CashbackPercentSlider';
 import { ActionButtons } from '@components/shared/ActionButtons';
-import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
+import { ActionSheet } from '@components/shared/ActionSheet';
+import { ConfirmDelete } from '@components/shared/ConirmDelete';
 import { Fab } from '@components/shared/Fab';
 import { Box } from '@components/ui/box';
-import { Heading } from '@components/ui/heading';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
@@ -14,10 +16,9 @@ import type { CashbackCategoryData } from '@customTypes/cashback';
 import { useBankCards } from '@hooks/useBankCards';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { AlignJustify, Image, Star, Trash } from 'lucide-react-native';
-import { ComponentType, useRef, useState } from 'react';
+import { AlignJustify, Star, Trash } from 'lucide-react-native';
+import { useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
-import { SvgProps } from 'react-native-svg';
 
 type step = 1 | 2;
 
@@ -36,28 +37,25 @@ export default function EditCashbackScreen() {
     const [selectedCashbackCategoryCode, setSelectedCashbackCategoryCode] = useState('');
     const [selectedCashbackCategoryPercent, setSelectedCashbackCategoryPercent] = useState(1);
 
-    const editCashbackSheetRef = useRef<ActionSheetRef>(null);
-    const deleteAllCategoriesSheetRef = useRef<ActionSheetRef>(null);
+    const [isEditCashbackSheetVisible, setIsEditCashbackSheetVisible] = useState(false);
+    const [isDeleteAllCategoriesSheetVisible, setIsDeleteAllCategoriesSheetVisible] = useState(false);
 
     const openEditCashbackSheet = () => {
-        editCashbackSheetRef.current?.show();
+        setStepAddCashback(1);
+        setSelectedCashbackCategoryPercent(1);
+        setIsEditCashbackSheetVisible(true);
     };
 
     const closeEditCashbackSheet = () => {
-        editCashbackSheetRef.current?.hide();
+        setIsEditCashbackSheetVisible(false);
     };
 
     const openDeleteAllCategoriesSheet = () => {
-        deleteAllCategoriesSheetRef.current?.show();
+        setIsDeleteAllCategoriesSheetVisible(true);
     };
 
     const closeDeleteAllCategoriesSheet = () => {
-        deleteAllCategoriesSheetRef.current?.hide();
-    };
-
-    const getCashbackCategoryIcon = (icon: ComponentType<SvgProps> | undefined) => {
-        const Icon = icon ?? Star;
-        return <Icon color="#fff" size={20} />;
+        setIsDeleteAllCategoriesSheetVisible(false);
     };
 
     const handleSelectAddCashback = (code: string) => {
@@ -73,7 +71,7 @@ export default function EditCashbackScreen() {
     const handleClearBankCardCashback = () => {
         updateCashbackCategoriesBankCard(bankCardId.toString(), []).then(() => {
             closeDeleteAllCategoriesSheet();
-            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD_WITH_CASHBACK] });
         });
     };
 
@@ -96,15 +94,11 @@ export default function EditCashbackScreen() {
         }
 
         updateCashbackCategoriesBankCard(bankCardId.toString(), categoriesCashbackBankCard).then(() => {
-            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
-            resetCashbackParams();
+            queryClient.invalidateQueries({
+                queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD_WITH_CASHBACK],
+            });
+            closeEditCashbackSheet();
         });
-    };
-
-    const resetCashbackParams = () => {
-        closeEditCashbackSheet();
-        setStepAddCashback(1);
-        setSelectedCashbackCategoryPercent(1);
     };
 
     const handleEditCashbackCategory = (item: CashbackCategoryData) => {
@@ -118,7 +112,7 @@ export default function EditCashbackScreen() {
         const categoriesCashbackBankCard = cashbackCategories?.filter((category) => category.code !== code) || [];
 
         updateCashbackCategoriesBankCard(bankCardId.toString(), categoriesCashbackBankCard).then(() => {
-            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD] });
+            queryClient.invalidateQueries({ queryKey: [BANK_CARDS_QUERY_KEYS.BANK_CARD_WITH_CASHBACK] });
         });
     };
 
@@ -142,45 +136,20 @@ export default function EditCashbackScreen() {
 
                     {cashbackCategories && cashbackCategories?.length > 0 && (
                         <Box className="mt-6">
-                            <HStack className="items-center justify-between mb-6" space="md">
-                                <Pressable
-                                    className="flex-row flex-1 gap-[5px] justify-center items-center bg-neutral-700 rounded-full px-4 py-3"
-                                    onPress={openDeleteAllCategoriesSheet}
-                                >
-                                    <Trash size={20} color="#d4d4d4" />
-                                    <Text className="text-neutral-300" size="lg">
-                                        Очистить
-                                    </Text>
-                                </Pressable>
-
-                                <Pressable
-                                    className="flex-row flex-1 gap-[5px] justify-center items-center bg-neutral-700 rounded-full px-4 py-3"
-                                    onPress={openDeleteAllCategoriesSheet}
-                                >
-                                    <Image size={20} color="#d4d4d4" />
-                                    <Text className="text-neutral-300" size="lg">
-                                        Загрузить
-                                    </Text>
-                                </Pressable>
-                            </HStack>
+                            <CashbackActionButtons
+                                onClearPress={openDeleteAllCategoriesSheet}
+                                onLoadPress={openDeleteAllCategoriesSheet}
+                            />
 
                             <FlatList
                                 data={cashbackCategories}
+                                ItemSeparatorComponent={() => <Box className="h-4" />}
+                                contentContainerStyle={{ padding: 0 }}
                                 keyExtractor={(item) => item.code}
                                 renderItem={({ item }) => (
                                     <HStack space="md" className="items-center">
                                         <Pressable className="w-[85%]" onPress={() => handleEditCashbackCategory(item)}>
-                                            <HStack className="items-center">
-                                                <Box className="rounded-full bg-orange-800 p-2">
-                                                    {getCashbackCategoryIcon(item.icon)}
-                                                </Box>
-                                                <Text className="ml-3" size="2xl">
-                                                    {item.name}
-                                                </Text>
-                                                <Text className="ml-auto" size="2xl">
-                                                    {item.percent}%
-                                                </Text>
-                                            </HStack>
+                                            <CashbackCategoryItem {...item} />
                                         </Pressable>
 
                                         <Pressable
@@ -191,49 +160,42 @@ export default function EditCashbackScreen() {
                                         </Pressable>
                                     </HStack>
                                 )}
-                                ItemSeparatorComponent={() => <Box className="h-4" />}
-                                contentContainerStyle={{ padding: 0 }}
                             />
                         </Box>
                     )}
 
-                    <ActionSheet ref={deleteAllCategoriesSheetRef}>
-                        <Heading size="xl" className="text-center mb-6">
-                            Вы действительно хотите очистить весь список?
-                        </Heading>
+                    <ConfirmDelete
+                        title="Вы действительно хотите очистить весь список?"
+                        confirmText="Очистить"
+                        onConfirm={handleClearBankCardCashback}
+                        onCancel={closeDeleteAllCategoriesSheet}
+                        visible={isDeleteAllCategoriesSheetVisible}
+                    />
 
-                        <ActionButtons
-                            confirm={handleClearBankCardCashback}
-                            cancel={closeDeleteAllCategoriesSheet}
-                            confirmText="Очистить"
-                        />
-                    </ActionSheet>
+                    <ActionSheet
+                        title={stepAddCashback === 1 ? 'Выберите категорию' : 'Процент кешбека'}
+                        showCloseButton={false}
+                        visible={isEditCashbackSheetVisible}
+                        onClose={closeEditCashbackSheet}
+                    >
+                        {stepAddCashback === 1 && (
+                            <CashbackCategorySelector handleSelectAddCashback={handleSelectAddCashback} />
+                        )}
 
-                    <ActionSheet ref={editCashbackSheetRef}>
-                        <VStack space="md" className="w-full">
-                            <Heading className="text-center mb-3" size="2xl">
-                                {stepAddCashback === 1 ? 'Выберите категорию' : 'Процент кешбека'}
-                            </Heading>
+                        {stepAddCashback === 2 && (
+                            <VStack space="md" className="w-full">
+                                <CashbackPercentSlider
+                                    initialValue={selectedCashbackCategoryPercent}
+                                    onValueChange={setSelectedCashbackCategoryPercent}
+                                />
 
-                            {stepAddCashback === 1 && (
-                                <EditCasbackCategories handleSelectAddCashback={handleSelectAddCashback} />
-                            )}
-
-                            {stepAddCashback === 2 && (
-                                <VStack space="md" className="w-full">
-                                    <CashbackPercent
-                                        initialValue={selectedCashbackCategoryPercent}
-                                        onValueChange={setSelectedCashbackCategoryPercent}
-                                    />
-
-                                    <ActionButtons
-                                        confirm={handleAddCashback}
-                                        cancel={resetCashbackParams}
-                                        confirmText="Готово"
-                                    />
-                                </VStack>
-                            )}
-                        </VStack>
+                                <ActionButtons
+                                    confirm={handleAddCashback}
+                                    cancel={closeEditCashbackSheet}
+                                    confirmText="Готово"
+                                />
+                            </VStack>
+                        )}
                     </ActionSheet>
                 </>
             )}
