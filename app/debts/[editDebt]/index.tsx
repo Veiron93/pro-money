@@ -1,5 +1,4 @@
 import { FormDebt } from '@components/pages/debts/FormDebt';
-import { Box } from '@components/ui/box';
 import { DEBT_QUERY_KEYS } from '@constants/queryKeys';
 import { DebtFormData } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
@@ -7,6 +6,7 @@ import { paramsToastMessageProps, useToastMessage } from '@hooks/useToastMessage
 import { debtManager } from '@managers/debtManager';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import { View } from 'react-native';
 
 export default function EditDebtScreen() {
     const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export default function EditDebtScreen() {
     };
 
     return (
-        <Box className="p-4 pt-1 flex-1">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'Изменить долг' }} />
 
             {data && (
@@ -51,6 +51,6 @@ export default function EditDebtScreen() {
                     btnSubmit={{ title: 'Сохранить', onPress: handleEditDebt }}
                 />
             )}
-        </Box>
+        </View>
     );
 }

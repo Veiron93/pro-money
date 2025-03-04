@@ -1,8 +1,8 @@
 import { SubNavigation } from '@components/pages/settings/SubNavigation';
-import { VStack } from '@components/ui/vstack';
 import { NavigationLink } from '@customTypes/settings';
 import { Stack } from 'expo-router';
 import { LayoutList } from 'lucide-react-native';
+import { View } from 'react-native';
 
 const iconsParams = {
     color: 'white',
@@ -20,9 +20,9 @@ const links: NavigationLink[] = [
 
 export default function CashbackScreen() {
     return (
-        <VStack className="flex-1 p-4">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'Кешбек' }} />
             <SubNavigation links={links} />
-        </VStack>
+        </View>
     );
 }

@@ -1,7 +1,7 @@
 import { COLORS } from '@configs/theme';
 import { Stack } from 'expo-router';
 
-export const Layout = () => {
+export const RootLayout = () => {
     return (
         <Stack
             screenOptions={{
@@ -11,6 +11,8 @@ export const Layout = () => {
                 headerTintColor: COLORS.white,
                 contentStyle: {
                     backgroundColor: COLORS.background,
+                    padding: 15,
+                    paddingTop: 5,
                 },
                 headerShadowVisible: false,
                 animation: 'fade',

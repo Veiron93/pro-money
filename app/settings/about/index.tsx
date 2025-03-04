@@ -1,4 +1,3 @@
-import { Box } from '@components/ui/box';
 import { Text } from '@components/ui/text';
 import { LINK_FEEDBACK } from '@constants/app';
 import { Link, Stack } from 'expo-router';
@@ -7,10 +6,10 @@ import { View } from 'react-native';
 export default function AboutScreen() {
     const textStyle = { fontSize: 18 };
     return (
-        <View className="flex-1 p-4 pt-[20px]">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'О приложении' }} />
 
-            <Box>
+            <View>
                 <Text style={textStyle} className="leading-9">
                     Приложение создано, чтобы упростить контроль за своими финансами.
                 </Text>
@@ -26,7 +25,7 @@ export default function AboutScreen() {
                         связаться со мной!
                     </Link>
                 </Text>
-            </Box>
+            </View>
 
             <Text className="mt-auto text-center" size="sm">
                 Версия: 0.1.0

@@ -7,7 +7,6 @@ import { ActionButtons } from '@components/shared/ActionButtons';
 import { ActionSheet } from '@components/shared/ActionSheet';
 import { ConfirmDelete } from '@components/shared/ConirmDelete';
 import { Fab } from '@components/shared/Fab';
-import { Box } from '@components/ui/box';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
@@ -16,9 +15,9 @@ import type { CashbackCategoryData } from '@customTypes/cashback';
 import { useBankCards } from '@hooks/useBankCards';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { AlignJustify, Star, Trash } from 'lucide-react-native';
+import { AlignJustify, Trash } from 'lucide-react-native';
 import { useState } from 'react';
-import { FlatList, Pressable } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 
 type step = 1 | 2;
 
@@ -117,7 +116,7 @@ export default function EditCashbackScreen() {
     };
 
     return (
-        <VStack className="p-4 pt-1 flex-1">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'Управление кешбеком' }} />
 
             {bankCard && (
@@ -135,7 +134,7 @@ export default function EditCashbackScreen() {
                     )}
 
                     {cashbackCategories && cashbackCategories?.length > 0 && (
-                        <Box className="mt-6">
+                        <View className="mt-6">
                             <CashbackActionButtons
                                 onClearPress={openDeleteAllCategoriesSheet}
                                 onLoadPress={openDeleteAllCategoriesSheet}
@@ -143,7 +142,7 @@ export default function EditCashbackScreen() {
 
                             <FlatList
                                 data={cashbackCategories}
-                                ItemSeparatorComponent={() => <Box className="h-4" />}
+                                ItemSeparatorComponent={() => <View className="h-4" />}
                                 contentContainerStyle={{ padding: 0 }}
                                 keyExtractor={(item) => item.code}
                                 renderItem={({ item }) => (
@@ -161,7 +160,7 @@ export default function EditCashbackScreen() {
                                     </HStack>
                                 )}
                             />
-                        </Box>
+                        </View>
                     )}
 
                     <ConfirmDelete
@@ -199,6 +198,6 @@ export default function EditCashbackScreen() {
                     </ActionSheet>
                 </>
             )}
-        </VStack>
+        </View>
     );
 }

@@ -6,6 +6,7 @@ import {
     CarTaxiFront,
     Dog,
     Film,
+    Flower,
     Fuel,
     GamepadIcon,
     GraduationCap,
@@ -20,6 +21,7 @@ import {
     Shirt,
     ShoppingBasket,
     ShoppingCart,
+    Smartphone,
     Store,
     Train,
     Utensils,
@@ -38,14 +40,19 @@ export const CashbackCategories: CashbackCategoryStorage[] = [
         icon: Car,
     },
     {
+        name: 'Аптеки',
+        code: 'pharmacy',
+        icon: Pill,
+    },
+    {
         name: 'Аренда авто',
         code: 'car_rental',
         icon: Car,
     },
     {
-        name: 'Аптеки',
-        code: 'pharmacy',
-        icon: Pill,
+        name: 'Все покупки',
+        code: 'all',
+        icon: ShoppingCart,
     },
     {
         name: 'Детские товары',
@@ -56,6 +63,11 @@ export const CashbackCategories: CashbackCategoryStorage[] = [
         name: 'Дом и ремонт',
         code: 'home',
         icon: Home,
+    },
+    {
+        name: 'Duty Free',
+        code: 'duty_free',
+        icon: ShoppingBasket,
     },
     {
         name: 'Ж/д билеты',
@@ -98,6 +110,11 @@ export const CashbackCategories: CashbackCategoryStorage[] = [
         icon: Scissors,
     },
     {
+        name: 'Маркетплейсы',
+        code: 'marketplaces',
+        icon: Store,
+    },
+    {
         name: 'Музыка',
         code: 'music',
         icon: Music,
@@ -111,6 +128,11 @@ export const CashbackCategories: CashbackCategoryStorage[] = [
         name: 'Одежда и обувь',
         code: 'clothes',
         icon: Shirt,
+    },
+    {
+        name: 'Онлайн-кинотеатры',
+        code: 'online_cinema',
+        icon: Video,
     },
     {
         name: 'Развлечения',
@@ -138,23 +160,23 @@ export const CashbackCategories: CashbackCategoryStorage[] = [
         icon: Fuel,
     },
     {
+        name: 'Транспорт',
+        code: 'transport',
+        icon: Train,
+    },
+    {
         name: 'Фастфуд',
         code: 'fastfood',
         icon: Pizza,
     },
     {
-        name: 'Duty Free',
-        code: 'duty_free',
-        icon: ShoppingBasket,
+        name: 'Цветы',
+        code: 'flowers',
+        icon: Flower,
     },
     {
-        name: 'Онлайн-кинотеатры',
-        code: 'online_cinema',
-        icon: Video,
-    },
-    {
-        name: 'Маркетплейсы',
-        code: 'marketplaces',
-        icon: Store,
+        name: 'Электроника',
+        code: 'electronics',
+        icon: Smartphone,
     },
 ];

@@ -1,12 +1,12 @@
 import { ArchiveDebtsList } from '@components/pages/debts/ArchiveDebtsList';
 import { ToggleDebtor } from '@components/pages/debts/ToggleDebtor';
-import { Box } from '@components/ui/box';
 import { DebtorType } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
+import { View } from 'react-native';
 
 export default function Archive() {
     const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ export default function Archive() {
     );
 
     return (
-        <Box className="flex-1 gap-5 p-3 pt-0">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'Архив' }} />
 
             <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} />
@@ -34,10 +34,10 @@ export default function Archive() {
                     <ArchiveDebtsList
                         key={debtorType}
                         debts={debts}
-                        className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'}`}
+                        className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'} mt-5`}
                     />
                 );
             })}
-        </Box>
+        </View>
     );
 }

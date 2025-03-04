@@ -1,1 +1,1 @@
-export { Layout as default } from '@components/pages/Layout';
+export { RootLayout as default } from '@/components/pages/layouts/RootLayout';

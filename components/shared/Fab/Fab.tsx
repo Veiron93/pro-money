@@ -13,7 +13,7 @@ interface FabProps {
 export const Fab = ({ onPress, className, size, placement, icon, label }: FabProps) => {
     const sizeFab = size || 'lg';
     const placementFab = placement || 'bottom center';
-    const classNameFab = className || 'bg-green-900 shadow-md';
+    const classNameFab = className || 'bg-green-900 shadow-md hover:bg-green-800 active:bg-green-950';
 
     return (
         <FabGluestack onPress={onPress} className={classNameFab} size={sizeFab} placement={placementFab}>

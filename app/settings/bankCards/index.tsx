@@ -1,21 +1,17 @@
 import { BankCardItem } from '@components/pages/bankCards/BankCardItem';
-import { ActionButtons } from '@components/shared/ActionButtons';
-import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
+import { ConfirmDelete } from '@components/shared/ConirmDelete';
 import { Fab } from '@components/shared/Fab';
 import { Spinner } from '@components/shared/Spinner';
-import { Box } from '@components/ui/box';
-import { Heading } from '@components/ui/heading';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
-import { VStack } from '@components/ui/vstack';
 import { BankCard } from '@customTypes/bankCard';
 import { useBankCards } from '@hooks/useBankCards';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, router, useFocusEffect } from 'expo-router';
 import { Landmark, Plus, Trash } from 'lucide-react-native';
-import { useCallback, useRef, useState } from 'react';
-import { FlatList, Pressable } from 'react-native';
+import { useCallback, useState } from 'react';
+import { FlatList, Pressable, View } from 'react-native';
 
 export default function BankCardsScreen() {
     const queryClient = useQueryClient();
@@ -26,31 +22,23 @@ export default function BankCardsScreen() {
 
     const [activeDeleteCard, setActiveDeleteCard] = useState<BankCard | undefined>();
 
-    const deleteBankCardSheetRef = useRef<ActionSheetRef>(null);
+    const [isDeleteBankCardSheetVisible, setIsDeleteBankCardSheetVisible] = useState(false);
 
     const handleDeleteCard = (card: BankCard) => {
         setActiveDeleteCard(card);
-        openDeleteBankCardSheet();
+        setIsDeleteBankCardSheetVisible(true);
     };
 
     const handleCancelDeleteBankCard = () => {
         setActiveDeleteCard(undefined);
-        closeDeleteBankCardSheet();
+        setIsDeleteBankCardSheetVisible(false);
     };
 
     const handleConfirmDeleteBankCard = () => {
         deleteBankCard(activeDeleteCard!.id).then(() => {
             setActiveDeleteCard(undefined);
-            closeDeleteBankCardSheet();
+            setIsDeleteBankCardSheetVisible(false);
         });
-    };
-
-    const openDeleteBankCardSheet = () => {
-        deleteBankCardSheetRef.current?.show();
-    };
-
-    const closeDeleteBankCardSheet = () => {
-        deleteBankCardSheetRef.current?.hide();
     };
 
     useFocusEffect(
@@ -60,15 +48,15 @@ export default function BankCardsScreen() {
     );
 
     return (
-        <VStack className="flex-1">
+        <View className="flex-1 mb-[-12px]">
             <Stack.Screen options={{ title: 'Банковские карты' }} />
 
             {isCardsLoading && <Spinner />}
 
             {!isCardsLoading && cards.length > 0 && (
                 <FlatList
-                    contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-                    ItemSeparatorComponent={() => <Box className="h-4" />}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    ItemSeparatorComponent={() => <View className="h-4" />}
                     data={cards}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
@@ -102,20 +90,15 @@ export default function BankCardsScreen() {
                 />
             )}
 
-            <ActionSheet ref={deleteBankCardSheetRef}>
-                <Heading size="xl" className="text-center mb-7">
-                    Вы действительно хотите удалить {activeDeleteCard?.name} карту?
-                </Heading>
-
-                <ActionButtons
-                    confirm={handleConfirmDeleteBankCard}
-                    cancel={handleCancelDeleteBankCard}
-                    isPending={isPending.delete}
-                    confirmText="Удалить"
-                />
-            </ActionSheet>
+            <ConfirmDelete
+                title={`Вы действительно хотите удалить ${activeDeleteCard?.name} карту?`}
+                confirmText="Удалить"
+                onConfirm={handleConfirmDeleteBankCard}
+                onCancel={handleCancelDeleteBankCard}
+                visible={isDeleteBankCardSheetVisible}
+            />
 
             <Fab onPress={() => router.navigate('/settings/bankCards/addCard')} label="Добавить карту" icon={Plus} />
-        </VStack>
+        </View>
     );
 }

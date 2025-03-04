@@ -1,9 +1,9 @@
 import { FormBankCard } from '@components/pages/bankCards/FormBankCard';
-import { VStack } from '@components/ui/vstack';
 import { BankCardFormData } from '@customTypes/bankCard';
 import { useBankCards } from '@hooks/useBankCards';
 import { paramsToastMessageProps, useToastMessage } from '@hooks/useToastMessage';
 import { Stack } from 'expo-router';
+import { View } from 'react-native';
 
 export default function AddCardScreen() {
     const showToast = useToastMessage();
@@ -23,9 +23,9 @@ export default function AddCardScreen() {
     };
 
     return (
-        <VStack className="p-4 flex-1" space="2xl">
+        <View className="flex-1">
             <Stack.Screen options={{ title: 'Добавить банковскую карту' }} />
             <FormBankCard isPending={isPending.add} btnSubmit={{ title: 'Добавить', onPress: handleAddBankCard }} />
-        </VStack>
+        </View>
     );
 }

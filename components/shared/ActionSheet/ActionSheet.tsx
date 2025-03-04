@@ -72,6 +72,7 @@ export const ActionSheet = ({
             fontSize: 20,
             fontWeight: 'bold',
             color: '#fff',
+            lineHeight: 28,
         },
     });
 

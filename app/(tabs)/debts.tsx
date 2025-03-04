@@ -3,7 +3,6 @@ import { ArchiveLink } from '@components/pages/debts/ArchiveLink';
 import { ToggleDebtor } from '@components/pages/debts/ToggleDebtor';
 import { TotalDebt } from '@components/pages/debts/TotalDebt';
 import { Fab } from '@components/shared/Fab';
-import { Box } from '@components/ui/box';
 import { HStack } from '@components/ui/hstack';
 import { DEBT_QUERY_KEYS } from '@constants/queryKeys';
 import type { DebtorType } from '@customTypes/debts';
@@ -30,27 +29,25 @@ export default function Debts() {
     );
 
     return (
-        <SafeAreaView className="flex-1">
-            <Box className="flex-1 gap-5 pt-4 mb-[-12px]">
-                <HStack className="justify-between items-center gap-3">
-                    <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
-                    <ArchiveLink />
-                </HStack>
+        <SafeAreaView className="flex-1 gap-5 mt-4 mb-[-12px]">
+            <HStack className="justify-between items-center gap-3 flex-none">
+                <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
+                <ArchiveLink />
+            </HStack>
 
-                <TotalDebt debts={debtsGrouped} debtsTypeActive={activeDebtorType} />
+            <TotalDebt debts={debtsGrouped} debtsTypeActive={activeDebtorType} />
 
-                {Object.entries(debtsGrouped).map(([debtorType, debts]) => {
-                    return (
-                        <ActiveDebtsList
-                            key={debtorType}
-                            debts={debts}
-                            className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'}`}
-                        />
-                    );
-                })}
+            {Object.entries(debtsGrouped).map(([debtorType, debts]) => {
+                return (
+                    <ActiveDebtsList
+                        key={debtorType}
+                        debts={debts}
+                        className={`${activeDebtorType === debtorType ? 'flex' : 'hidden'}`}
+                    />
+                );
+            })}
 
-                <Fab onPress={() => router.push('/debts/addDebt')} label="Добавить долг" icon={Plus} />
-            </Box>
+            <Fab onPress={() => router.push('/debts/addDebt')} label="Добавить долг" icon={Plus} />
         </SafeAreaView>
     );
 }

@@ -1,16 +1,16 @@
-import { CustomCategoryCashback } from '@/types/cashback';
 import { ActionButtons } from '@components/shared/ActionButtons';
-import { ActionSheet, ActionSheetRef } from '@components/shared/ActionSheet';
+import { ActionSheet } from '@components/shared/ActionSheet';
 import { Input } from '@components/shared/Input';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
+import { CustomCategoryCashback } from '@customTypes/cashback';
 import { useCustomCategoriesCashback } from '@hooks/useCustomCategoriesCashback';
 import { CUSTOM_CATEGORIES_CASHBACK_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useFocusEffect } from 'expo-router';
 import { Trash } from 'lucide-react-native';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
 
 export default function CashbackScreen() {
@@ -20,11 +20,11 @@ export default function CashbackScreen() {
     const [editItem, setEditItem] = useState<CustomCategoryCashback>();
     const [editItemName, setEditItemName] = useState('');
 
-    const editCustomCategoryCashbackSheetRef = useRef<ActionSheetRef>(null);
-
     const { categories, addCategory, updateCategory, deleteCategory, isPending } = useCustomCategoriesCashback();
 
     const { data: customCategoriesCashback = [], isLoading: isCustomCategoriesCashbackLoading } = categories;
+
+    const [isEditCashbackSheetVisible, setIsEditCashbackSheetVisible] = useState(false);
 
     const handleAddCustomCategoryCashback = () => {
         addCategory({
@@ -37,7 +37,7 @@ export default function CashbackScreen() {
     const handleEditCustomCategoryCashback = (item: CustomCategoryCashback) => {
         setEditItem(item);
         setEditItemName(item.name);
-        openEditCustomCategoryCashbackSheet();
+        setIsEditCashbackSheetVisible(true);
     };
 
     const handleActionConfirmEditCustomCategoryCashback = () => {
@@ -50,20 +50,12 @@ export default function CashbackScreen() {
 
         setEditItem(undefined);
         setEditItemName('');
-        closeEditCustomCategoryCashbackSheet();
+        setIsEditCashbackSheetVisible(false);
     };
 
     const handleActionCancelEditCustomCategoryCashback = () => {
         setEditItem(undefined);
-        closeEditCustomCategoryCashbackSheet();
-    };
-
-    const openEditCustomCategoryCashbackSheet = () => {
-        editCustomCategoryCashbackSheetRef.current?.show();
-    };
-
-    const closeEditCustomCategoryCashbackSheet = () => {
-        editCustomCategoryCashbackSheetRef.current?.hide();
+        setIsEditCashbackSheetVisible(false);
     };
 
     useFocusEffect(
@@ -75,10 +67,10 @@ export default function CashbackScreen() {
     );
 
     return (
-        <VStack className="flex-1 p-4">
+        <View className="flex-1 mb-[-12px]">
             <Stack.Screen options={{ title: 'Пользовательские категории' }} />
 
-            <HStack className="w-full h-[58px] flex-none" space="sm">
+            <HStack className="w-full h-[58px] flex-none" space="md">
                 <Input className="flex-1" value={name} onChange={setName} placeholder="Название категории" />
 
                 <Pressable
@@ -90,10 +82,10 @@ export default function CashbackScreen() {
             </HStack>
 
             <FlatList
-                className="mt-6"
+                className="mt-6 pb-4"
                 data={customCategoriesCashback}
                 keyExtractor={(item) => item.code}
-                ItemSeparatorComponent={() => <View className="h-[8px] bg-neutral-900" />}
+                ItemSeparatorComponent={() => <View className="h-2 bg-neutral-900" />}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                     <HStack className="w-full items-center justify-between">
@@ -111,7 +103,12 @@ export default function CashbackScreen() {
                 )}
             />
 
-            <ActionSheet ref={editCustomCategoryCashbackSheetRef}>
+            <ActionSheet
+                title="Редактировать категорию"
+                showCloseButton={false}
+                visible={isEditCashbackSheetVisible}
+                onClose={() => setIsEditCashbackSheetVisible(false)}
+            >
                 <VStack space="md" className="w-full">
                     <Input
                         className="mb-2"
@@ -127,6 +124,6 @@ export default function CashbackScreen() {
                     />
                 </VStack>
             </ActionSheet>
-        </VStack>
+        </View>
     );
 }

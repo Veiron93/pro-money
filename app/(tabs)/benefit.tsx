@@ -57,29 +57,27 @@ export default function BenefitScreen() {
     const NAVIGATION_ITEM_STYLE = 'bg-neutral-700 rounded-full h-[46px] items-center justify-center px-3 py-1';
 
     return (
-        <SafeAreaView className="flex-1">
-            <View className="pt-4 flex-1">
-                <HStack space="sm" className="justify-between flex-none">
-                    <Pressable className={NAVIGATION_ITEM_STYLE + ' w-[46px]'}>
-                        <Home size="18" />
+        <SafeAreaView className="flex-1 mt-4">
+            <HStack space="sm" className="justify-between flex-none">
+                <Pressable className={NAVIGATION_ITEM_STYLE + ' w-[46px]'}>
+                    <Home size="18" />
+                </Pressable>
+
+                {navigationItems.map((item) => (
+                    <Pressable
+                        key={item.code}
+                        className={`${NAVIGATION_ITEM_STYLE} ${activeTab === item.code ? 'bg-primary-500' : ''}`}
+                        onPress={() => handleTabPress(item.code)}
+                    >
+                        <Text size="md">{item.title}</Text>
                     </Pressable>
+                ))}
+            </HStack>
 
-                    {navigationItems.map((item) => (
-                        <Pressable
-                            key={item.code}
-                            className={`${NAVIGATION_ITEM_STYLE} ${activeTab === item.code ? 'bg-primary-500' : ''}`}
-                            onPress={() => handleTabPress(item.code)}
-                        >
-                            <Text size="md">{item.title}</Text>
-                        </Pressable>
-                    ))}
-                </HStack>
-
-                <ScrollView className="mt-4">
-                    {activeTab === 'finance' && <Main />}
-                    {/* Добавьте другие компоненты для остальных вкладок */}
-                </ScrollView>
-            </View>
+            <ScrollView className="mt-4">
+                {activeTab === 'finance' && <Main />}
+                {/* Добавьте другие компоненты для остальных вкладок */}
+            </ScrollView>
         </SafeAreaView>
     );
 }
