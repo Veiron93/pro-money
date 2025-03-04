@@ -1,10 +1,9 @@
+import { cashbackCategoriesService } from '@/services/cashbackCategoriesService';
 import type { BankCardFormData, BankCardWithCashback } from '@customTypes/bankCard';
 import type { CashbackCategoryData, CashbackCategoryWithPercent } from '@customTypes/cashback';
 import { BANK_CARDS_QUERY_KEYS } from '@keys/queryKeys';
 import { bankCardManager } from '@managers/bankCardManager';
-import { customCategoriesCashbackManager } from '@managers/customCategoriesCashbackManager';
 import { bankCardRepository } from '@repositories/bankCardRepository';
-import { CashbackCategories } from '@storage/cashbackCategories';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { handleAsyncOperation } from '@utils/handleAsyncOperation';
 
@@ -66,25 +65,6 @@ export const useBankCards = () => {
             enabled: !!id,
         });
 
-    const getSystemCashbackCategories = () => {
-        return CashbackCategories;
-    };
-
-    const getCustomCashbackCategories = async () => {
-        return await customCategoriesCashbackManager.getCustomCategoriesCashback();
-    };
-
-    /**
-     * Получает все системные и пользовательские категории кешбека
-     * @returns Массив категорий кешбека
-     */
-    const getCashbackCategoriesMap = async () => {
-        const systemCategories = getSystemCashbackCategories();
-        const customCategories = await getCustomCashbackCategories();
-
-        return new Map([...systemCategories, ...customCategories].map((category) => [category.code, category]));
-    };
-
     /**
      * Получает все банковские карты с кешбеком
      * @returns Массив банковских карт с кешбеком
@@ -96,7 +76,7 @@ export const useBankCards = () => {
             return [];
         }
 
-        const categoriesMap = await getCashbackCategoriesMap();
+        const categoriesMap = await cashbackCategoriesService.getCategoriesMap();
 
         return bankCards
             .filter((bankCard) => bankCard.cashbackCategories?.length)
@@ -127,7 +107,7 @@ export const useBankCards = () => {
             return { bankCard, cashbackCategories: [] };
         }
 
-        const categoriesMap = await getCashbackCategoriesMap();
+        const categoriesMap = await cashbackCategoriesService.getCategoriesMap();
 
         const cashbackCategories = bankCard.cashbackCategories.map(({ code, percent }) => {
             const cashbackCategory = categoriesMap.get(code);

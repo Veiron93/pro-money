@@ -1,7 +1,7 @@
 // Репозиторий - отвечает только за CRUD операции с данными
 import type { BankCard } from '@customTypes/bankCard';
 import { STORAGE_KEYS } from '@keys/storageKeys';
-import { localStorageService } from '@services/storage/localStorageService';
+import { localStorageService } from '@services/localStorageService';
 
 export const bankCardRepository = {
     async getAll(): Promise<BankCard[]> {

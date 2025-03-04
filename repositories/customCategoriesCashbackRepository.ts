@@ -1,7 +1,7 @@
 // Репозиторий - отвечает только за CRUD операции с данными
 import { STORAGE_KEYS } from '@constants/storageKeys';
 import { CustomCategoryCashback } from '@customTypes/cashback';
-import { localStorageService } from '@services/storage/localStorageService';
+import { localStorageService } from '@services/localStorageService';
 
 const STORAGE_KEY = STORAGE_KEYS.CUSTOM_CATEGORIES_CASHBACK;
 

@@ -1,7 +1,7 @@
 // Репозиторий - отвечает только за CRUD операции с данными
 import { STORAGE_KEYS } from '@constants/storageKeys';
 import type { Debt } from '@customTypes/debts';
-import { localStorageService } from '@services/storage/localStorageService';
+import { localStorageService } from '@services/localStorageService';
 
 export const debtRepository = {
     async getAll(): Promise<Debt[]> {

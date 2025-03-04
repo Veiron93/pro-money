@@ -1,9 +1,9 @@
+import { useCashback } from '@/hooks/useCashback';
+import { CashbackCategoryStorage, CustomCategoryCashback } from '@/types/cashback';
 import { Toggle } from '@components/shared/Toggle';
 import { Box } from '@components/ui/box';
 import { Text } from '@components/ui/text';
-import { TypeCategories } from '@customTypes/cashback';
-import { useCustomCategoriesCashback } from '@hooks/useCustomCategoriesCashback';
-import { CashbackCategories } from '@storage/cashbackCategories';
+import { Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { FlatList as FlatListSheet } from 'react-native-actions-sheet';
@@ -12,61 +12,56 @@ interface EditCasbackCategoriesProps {
     handleSelectAddCashback: (code: string) => void;
 }
 
+type TypeCategories = 'system' | 'custom';
+
 export const EditCasbackCategories = ({ handleSelectAddCashback }: EditCasbackCategoriesProps) => {
     const [typeCategories, setTypeCategories] = useState<TypeCategories>('system');
 
-    const { categories: customCategoriesCashback } = useCustomCategoriesCashback();
+    const { categoriesGroupedQuery } = useCashback();
 
-    // TODO: вынести список в компонент
+    const { system: systemCategories, custom: customCategories } = categoriesGroupedQuery.data || {};
+
+    const categories = typeCategories === 'system' ? systemCategories : customCategories;
+
+    const categoriesTypeItems = [
+        { title: 'Системные', value: 'system' },
+        { title: 'Добавленные', value: 'custom' },
+    ];
+
+    const renderCategoryIcon = (item: CashbackCategoryStorage | CustomCategoryCashback) => {
+        if ('icon' in item) {
+            const Icon = item.icon ?? Star;
+            return <Icon color="white" width={20} height={20} style={{ marginRight: 10 }} />;
+        }
+
+        return null;
+    };
+
     return (
         <>
             <Toggle
-                items={[
-                    { title: 'Системные', value: 'system' },
-                    { title: 'Добавленные', value: 'custom' },
-                ]}
+                items={categoriesTypeItems}
                 active={typeCategories}
                 setActive={(active) => setTypeCategories(active as TypeCategories)}
                 className="mb-3"
             />
 
-            {typeCategories === 'system' && (
-                <FlatListSheet
-                    ItemSeparatorComponent={() => <Box className="h-3" />}
-                    className="min-h-[30vh] max-h-[50vh]"
-                    data={CashbackCategories}
-                    keyExtractor={(item) => item.code}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            className="flex-row items-center rounded-2xl bg-neutral-800 p-4 gap-4"
-                            onPress={() => handleSelectAddCashback(item.code)}
-                            key={item.code}
-                        >
-                            {item.icon}
-
-                            <Text size="xl">{item.name}</Text>
-                        </Pressable>
-                    )}
-                />
-            )}
-
-            {typeCategories === 'custom' && (
-                <FlatListSheet
-                    ItemSeparatorComponent={() => <Box className="h-3" />}
-                    className="min-h-[30vh] max-h-[50vh]"
-                    data={customCategoriesCashback.data}
-                    keyExtractor={(item) => item.code}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            className="flex-row items-center rounded-2xl bg-neutral-800 p-4"
-                            onPress={() => handleSelectAddCashback(item.code)}
-                            key={item.code}
-                        >
-                            <Text size="xl">{item.name}</Text>
-                        </Pressable>
-                    )}
-                />
-            )}
+            <FlatListSheet
+                ItemSeparatorComponent={() => <Box className="h-3" />}
+                className="min-h-[30vh] max-h-[50vh]"
+                data={categories}
+                keyExtractor={(item) => item.code}
+                renderItem={({ item }) => (
+                    <Pressable
+                        className="flex-row items-center rounded-2xl bg-neutral-800 p-4"
+                        onPress={() => handleSelectAddCashback(item.code)}
+                        key={item.code}
+                    >
+                        {renderCategoryIcon(item)}
+                        <Text size="xl">{item.name}</Text>
+                    </Pressable>
+                )}
+            />
         </>
     );
 };

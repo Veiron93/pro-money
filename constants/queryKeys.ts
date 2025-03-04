@@ -15,3 +15,7 @@ export const CUSTOM_CATEGORIES_CASHBACK_QUERY_KEYS = {
     CUSTOM_CATEGORIES: 'customCategoriesCashback',
     CUSTOM_CATEGORY: 'customCategoryCashback',
 } as const;
+
+export const CASHBACK_QUERY_KEYS = {
+    CATEGORIES_GROUPED: 'categoriesGroupedCashback',
+} as const;
