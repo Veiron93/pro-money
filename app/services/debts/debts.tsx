@@ -8,7 +8,7 @@ import { DEBT_QUERY_KEYS } from '@constants/queryKeys';
 import type { DebtorType } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { useQueryClient } from '@tanstack/react-query';
-import { router, useFocusEffect } from 'expo-router';
+import { Stack, router, useFocusEffect } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +29,9 @@ export default function Debts() {
     );
 
     return (
-        <SafeAreaView className="flex-1 gap-5 mt-4 mb-[-12px]">
+        <SafeAreaView className="flex-1 gap-5 mb-[-12px]">
+            <Stack.Screen options={{ title: 'Долги' }} />
+
             <HStack className="justify-between items-center gap-3 flex-none">
                 <ToggleDebtor debtsTypeActive={activeDebtorType} onPress={setActiveDebtorType} className="flex-1" />
                 <ArchiveLink />
@@ -47,7 +49,7 @@ export default function Debts() {
                 );
             })}
 
-            <Fab onPress={() => router.push('/debts/addDebt')} label="Добавить долг" icon={Plus} />
+            <Fab onPress={() => router.push('/services/debts/addDebt')} label="Добавить долг" icon={Plus} />
         </SafeAreaView>
     );
 }

@@ -1,6 +1,8 @@
 import { ActionButtons } from '@components/shared/ActionButtons';
 import { ActionSheet } from '@components/shared/ActionSheet';
+import { ConfirmDelete } from '@components/shared/ConirmDelete';
 import { Input } from '@components/shared/Input';
+import { Spinner } from '@components/shared/Spinner';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { VStack } from '@components/ui/vstack';
@@ -16,46 +18,60 @@ import { FlatList, Pressable, View } from 'react-native';
 export default function CashbackScreen() {
     const queryClient = useQueryClient();
 
-    const [name, setName] = useState('');
-    const [editItem, setEditItem] = useState<CustomCategoryCashback>();
-    const [editItemName, setEditItemName] = useState('');
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [selectedItem, setSelectedItem] = useState<CustomCategoryCashback>();
+    const [selectedItemName, setSelectedItemName] = useState('');
 
     const { categories, addCategory, updateCategory, deleteCategory, isPending } = useCustomCategoriesCashback();
 
     const { data: customCategoriesCashback = [], isLoading: isCustomCategoriesCashbackLoading } = categories;
 
     const [isEditCashbackSheetVisible, setIsEditCashbackSheetVisible] = useState(false);
+    const [isDeleteCategorySheetVisible, setIsDeleteCategorySheetVisible] = useState(false);
 
     const handleAddCustomCategoryCashback = () => {
+        if (newCategoryName.trim() === '') {
+            return;
+        }
+
         addCategory({
-            name,
+            name: newCategoryName,
         }).then(() => {
-            setName('');
+            setNewCategoryName('');
         });
     };
 
     const handleEditCustomCategoryCashback = (item: CustomCategoryCashback) => {
-        setEditItem(item);
-        setEditItemName(item.name);
+        setSelectedItem(item);
+        setSelectedItemName(item.name);
         setIsEditCashbackSheetVisible(true);
     };
 
     const handleActionConfirmEditCustomCategoryCashback = () => {
         const data: CustomCategoryCashback = {
-            name: editItemName,
-            code: editItem?.code ?? '',
+            name: selectedItemName,
+            code: selectedItem?.code ?? '',
         };
 
-        updateCategory(data);
-
-        setEditItem(undefined);
-        setEditItemName('');
-        setIsEditCashbackSheetVisible(false);
+        updateCategory(data).then(() => {
+            setSelectedItemName('');
+            setIsEditCashbackSheetVisible(false);
+        });
     };
 
     const handleActionCancelEditCustomCategoryCashback = () => {
-        setEditItem(undefined);
         setIsEditCashbackSheetVisible(false);
+    };
+
+    const handleDeleteCategory = (item: CustomCategoryCashback) => {
+        setSelectedItem(item);
+        setIsDeleteCategorySheetVisible(true);
+    };
+
+    const handleConfirmDeleteCategory = () => {
+        deleteCategory(selectedItem?.code ?? '').then(() => {
+            setIsDeleteCategorySheetVisible(false);
+        });
     };
 
     useFocusEffect(
@@ -71,37 +87,46 @@ export default function CashbackScreen() {
             <Stack.Screen options={{ title: 'Пользовательские категории' }} />
 
             <HStack className="w-full h-[58px] flex-none" space="md">
-                <Input className="flex-1" value={name} onChange={setName} placeholder="Название категории" />
+                <Input
+                    className="flex-1"
+                    value={newCategoryName}
+                    onChange={setNewCategoryName}
+                    placeholder="Название категории"
+                />
 
                 <Pressable
-                    className="rounded-full bg-green-800 p-2 items-center justify-center px-5"
+                    className="rounded-full p-2 items-center justify-center px-5 bg-green-900 hover:bg-green-800 active:bg-green-950"
                     onPress={() => handleAddCustomCategoryCashback()}
                 >
                     <Text className="text-white">Добавить</Text>
                 </Pressable>
             </HStack>
 
-            <FlatList
-                className="mt-6 pb-4"
-                data={customCategoriesCashback}
-                keyExtractor={(item) => item.code}
-                ItemSeparatorComponent={() => <View className="h-2 bg-neutral-900" />}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <HStack className="w-full items-center justify-between">
-                        <Pressable
-                            onPress={() => handleEditCustomCategoryCashback(item)}
-                            className="w-[93%] bg-neutral-800 rounded-2xl px-4 py-2"
-                        >
-                            <Text size="lg">{item.name}</Text>
-                        </Pressable>
+            {isCustomCategoriesCashbackLoading && <Spinner className="mt-8" />}
 
-                        <Pressable onPress={() => deleteCategory(item.code)} className="flex-none">
-                            <Trash size={20} color="#991b1b" />
-                        </Pressable>
-                    </HStack>
-                )}
-            />
+            {!isCustomCategoriesCashbackLoading && customCategoriesCashback.length > 0 && (
+                <FlatList
+                    className="mt-6 pb-4"
+                    data={customCategoriesCashback}
+                    keyExtractor={(item) => item.code}
+                    ItemSeparatorComponent={() => <View className="h-2 bg-neutral-900" />}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                        <HStack className="w-full items-center justify-between">
+                            <Pressable
+                                onPress={() => handleEditCustomCategoryCashback(item)}
+                                className="w-[93%] bg-neutral-800 rounded-2xl px-4 py-2"
+                            >
+                                <Text size="lg">{item.name}</Text>
+                            </Pressable>
+
+                            <Pressable onPress={() => handleDeleteCategory(item)} className="flex-none">
+                                <Trash size={20} color="#991b1b" />
+                            </Pressable>
+                        </HStack>
+                    )}
+                />
+            )}
 
             <ActionSheet
                 title="Редактировать категорию"
@@ -112,8 +137,8 @@ export default function CashbackScreen() {
                 <VStack space="md" className="w-full">
                     <Input
                         className="mb-2"
-                        value={editItemName}
-                        onChange={setEditItemName}
+                        value={selectedItemName}
+                        onChange={setSelectedItemName}
                         placeholder="Название категории"
                     />
 
@@ -124,6 +149,15 @@ export default function CashbackScreen() {
                     />
                 </VStack>
             </ActionSheet>
+
+            <ConfirmDelete
+                title={`Вы действительно хотите удалить "${selectedItem?.name}"?`}
+                confirmText="Удалить"
+                visible={isDeleteCategorySheetVisible}
+                isPending={isPending.delete}
+                onConfirm={() => handleConfirmDeleteCategory()}
+                onCancel={() => setIsDeleteCategorySheetVisible(false)}
+            />
         </View>
     );
 }

@@ -8,7 +8,7 @@ import { BANK_CARDS_QUERY_KEYS } from '@constants/queryKeys';
 import { useBankCards } from '@hooks/useBankCards';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { Percent } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
@@ -33,7 +33,7 @@ export default function CashbackScreen() {
     };
 
     const handleSelectCard = (id: string) => {
-        router.push(`/cashback/${id}`);
+        router.push(`/services/cashback/${id}`);
         closeEditCashbackModal();
     };
 
@@ -44,7 +44,9 @@ export default function CashbackScreen() {
     );
 
     return (
-        <SafeAreaView className="flex-1 gap-5 mt-4 mb-[-12px]">
+        <SafeAreaView className="flex-1 gap-5 mb-[-12px]">
+            <Stack.Screen options={{ title: 'Кешбек' }} />
+
             {isBankCardsLoading && <Spinner />}
 
             {!isBankCardsLoading && bankCards.length === 0 && <EmptyBankCardState />}

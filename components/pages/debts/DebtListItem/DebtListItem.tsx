@@ -1,6 +1,5 @@
-import { GradientContainer } from '@/components/shared/GradientContainer';
+import { GradientContainer } from '@components/shared/GradientContainer';
 import { HStack } from '@components/ui/hstack';
-import { VStack } from '@components/ui/vstack';
 import { Debt } from '@customTypes/debts';
 import { router } from 'expo-router';
 import { ReactNode } from 'react';
@@ -15,7 +14,7 @@ interface DebtListItemProps {
 
 export const DebtListItem = ({ children, data }: DebtListItemProps) => {
     const handleSelectDebt = (id: string) => {
-        router.push(`/debts/${id}`);
+        router.push(`/services/debts/${id}`);
     };
 
     return (

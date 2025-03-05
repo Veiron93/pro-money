@@ -1,6 +1,5 @@
 import { ActionsButtons } from '@components/pages/debts/ActiveDebtsList/ActionsButtons';
 import { DebtListItem } from '@components/pages/debts/DebtListItem';
-import { Box } from '@components/ui/box';
 import { HStack } from '@components/ui/hstack';
 import { Text } from '@components/ui/text';
 import { LEVELS, LEVEL_COLORS, LEVEL_ICONS } from '@constants/levels';
@@ -8,7 +7,7 @@ import type { Debt } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 interface ActiveDebtsListProps {
     debts: Debt[];
@@ -47,7 +46,7 @@ export const ActiveDebtsList = ({ debts, className }: ActiveDebtsListProps) => {
 
     return (
         <FlatList
-            ItemSeparatorComponent={() => <Box className="h-4" />}
+            ItemSeparatorComponent={() => <View className="h-4" />}
             contentContainerStyle={{ paddingBottom: 90 }}
             className={`h-full ${className}`}
             data={debts}

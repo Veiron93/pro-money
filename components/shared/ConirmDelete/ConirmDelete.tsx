@@ -7,6 +7,7 @@ interface ConfirmDeleteProps {
     onConfirm: () => void;
     onCancel: () => void;
     visible: boolean;
+    isPending?: boolean;
 }
 
 export const ConfirmDelete = ({ title, confirmText, onConfirm, onCancel, visible }: ConfirmDeleteProps) => {

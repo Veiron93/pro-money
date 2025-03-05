@@ -173,7 +173,7 @@ export default function EditCashbackScreen() {
 
                     <ActionSheet
                         title={stepAddCashback === 1 ? 'Выберите категорию' : 'Процент кешбека'}
-                        showCloseButton={false}
+                        showCloseButton={stepAddCashback === 1 ? true : false}
                         visible={isEditCashbackSheetVisible}
                         onClose={closeEditCashbackSheet}
                     >

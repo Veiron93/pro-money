@@ -1,12 +1,11 @@
 import { ActionsButtons } from '@components/pages/debts/ArchiveDebtsList/ActionsButtons';
 import { DebtListItem } from '@components/pages/debts/DebtListItem';
-import { Box } from '@components/ui/box';
 import type { Debt } from '@customTypes/debts';
 import { useDebts } from '@hooks/useDebts';
 import { DEBT_QUERY_KEYS } from '@keys/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { FC } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 interface ArchiveDebtsListProps {
     debts: Debt[];
@@ -26,7 +25,7 @@ export const ArchiveDebtsList: FC<ArchiveDebtsListProps> = ({ debts, className }
 
     return (
         <FlatList
-            ItemSeparatorComponent={() => <Box className="h-4" />}
+            ItemSeparatorComponent={() => <View className="h-4" />}
             contentContainerStyle={{ paddingBottom: 90 }}
             className={`h-full ${className}`}
             data={debts}

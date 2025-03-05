@@ -7,7 +7,7 @@
         "android": "DARK_MODE=media DARK_MODE=media expo start --android",
         "ios": "DARK_MODE=media DARK_MODE=media expo start --ios",
         "web": "DARK_MODE=media DARK_MODE=media expo start --web",
-        "build:android": "eas build --platform android --profile preview",
+        "build:android": "eas build -p android --profile preview",
         "test": "jest --watchAll",
         "lint": "expo lint",
         "postinstall": "patch-package"
